@@ -9,12 +9,12 @@
 
 using namespace std;
 
-Node* DataLoader::LoadData(string _fileName, Node* _targetNodes) {
+GraphNode* DataLoader::LoadData(string _fileName, GraphNode* _targetNodes) {
 
     int _numberOfElems = IndexOfLastElem(_fileName);
     _numberOfElems++;
 
-    Node* _nodes = new Node[_numberOfElems];
+    GraphNode* _nodes = new GraphNode[_numberOfElems];
     if (_targetNodes != NULL) {
         FillNodes(_nodes, _targetNodes, _fileName);
     }
@@ -25,17 +25,22 @@ Node* DataLoader::LoadData(string _fileName, Node* _targetNodes) {
     return _nodes;
 }
 
-void DataLoader::FillNodes(Node* _nodes, Node* _targetNodes, string _fileName) {
+void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _fileName) {
+    int _lineCount = 0;
     ifstream _fin;
     string _line;
     string _delimiter = "\t";
     _fin.open(_fileName);
     int index;
-    Node* _baseNode;
-    Node* _targetNode;
+    GraphNode* _baseNode;
+    GraphNode* _targetNode;
     Connection* _connection;
 
     while (getline(_fin, _line)) {
+        _lineCount++;
+        if (_lineCount % 1000==0) {
+            printf("%d\n",_lineCount);
+        }
         vector<string> words{};
 
         size_t pos = 0;
@@ -47,12 +52,12 @@ void DataLoader::FillNodes(Node* _nodes, Node* _targetNodes, string _fileName) {
         
         index = GetIndexFromName(words[0]);
 
-        _baseNode = &_targetNodes[index];
+        _baseNode = &_nodes[index];
         _baseNode->index = index;
         _baseNode->size = stoi(words[1]);
 
         index = GetIndexFromName(words[5]);
-        _targetNode = &_nodes[index];
+        _targetNode = &_targetNodes[index];
         _connection = new Connection();
         _connection->_base = _baseNode;
         _connection->_baseStart = stoi(words[2]);

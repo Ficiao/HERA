@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
-#include "ReadNode.h"
+#include "GraphNode.h"
 
 class DataLoader {
 public:
-	Node* LoadData(std::string _fileName, Node* _targetNodes);
+	GraphNode* LoadData(std::string _fileName, GraphNode* _targetNodes);
 private:
 	int IndexOfLastElem(std::string _fileName);
-	void FillNodes(Node* _nodes, Node* _targetNodes, std::string _fileName);
+	void FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, std::string _fileName);
 	int GetIndexFromName(std::string _name);
 };

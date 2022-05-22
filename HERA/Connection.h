@@ -1,13 +1,12 @@
 #pragma once
-#include "Node.h"
 
 class Connection {
 public:
-	Node* _base;
+	class GraphNode* _base;
 	int _baseStart;
 	int _baseEnd;
 	char _relativeStrand;
-	Node* _target;
+	class GraphNode* _target;
 	int _targetStart;
 	int _targetEnd;
 	int _residueMatches;

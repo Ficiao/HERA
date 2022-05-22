@@ -1,6 +1,6 @@
 #pragma once
-#include "Node.h"
+#include "GraphNode.h"
 
-class ContigNode : public Node {
+class ContigNode : public GraphNode {
 
 };
