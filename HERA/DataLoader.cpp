@@ -9,23 +9,23 @@
 
 using namespace std;
 
-GraphNode* DataLoader::LoadData(string _fileName, GraphNode* _targetNodes) {
+GraphNode* DataLoader::LoadData(string _fileName, GraphNode* _targetNodes, bool _isContig) {
 
     int _numberOfElems = IndexOfLastElem(_fileName);
     _numberOfElems++;
 
     GraphNode* _nodes = new GraphNode[_numberOfElems];
     if (_targetNodes != NULL) {
-        FillNodes(_nodes, _targetNodes, _fileName);
+        FillNodes(_nodes, _targetNodes, _fileName, _isContig);
     }
     else {
-        FillNodes(_nodes, _nodes, _fileName);
+        FillNodes(_nodes, _nodes, _fileName, _isContig);
     }
 
     return _nodes;
 }
 
-void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _fileName) {
+void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _fileName, bool _isContig) {
     int _lineCount = 0;
     ifstream _fin;
     string _line;
@@ -54,6 +54,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
 
         _baseNode = &_nodes[index];
         _baseNode->index = index;
+        _baseNode->isContig = _isContig;
         _baseNode->size = stoi(words[1]);
 
         index = GetIndexFromName(words[5]);
@@ -70,6 +71,22 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
         _connection->_allignmentBlockLenth = stoi(words[10]);
 
         _baseNode->connections.push_back(*_connection);
+
+        if (_isContig) {
+            _connection = new Connection();
+            _connection->_base = _targetNode;
+            _connection->_baseStart = stoi(words[7]);
+            _connection->_baseEnd = stoi(words[8]);
+            _connection->_relativeStrand = words[4].at(0);
+
+            _connection->_target = _baseNode;
+            _connection->_targetStart = stoi(words[2]);
+            _connection->_targetEnd = stoi(words[3]);
+            _connection->_residueMatches = stoi(words[9]);
+            _connection->_allignmentBlockLenth = stoi(words[10]);
+
+            _targetNode->backwardsContigConnection.push_back(*_connection);
+        }
 
     }   
 }
