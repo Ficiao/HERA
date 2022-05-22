@@ -35,13 +35,13 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
     GraphNode* _baseNode;
     GraphNode* _targetNode;
     Connection* _connection;
+    vector<string> words{};
 
     while (getline(_fin, _line)) {
         _lineCount++;
         if (_lineCount % 1000==0) {
             printf("%d\n",_lineCount);
         }
-        vector<string> words{};
 
         size_t pos = 0;
         for (int i = 0; i < 11; i++) {
@@ -88,7 +88,10 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             _targetNode->backwardsContigConnection.push_back(*_connection);
         }
 
+        words.clear();
     }   
+
+    _fin.close();
 }
 
 int DataLoader::IndexOfLastElem(std::string _fileName)
