@@ -147,7 +147,11 @@
     <ClCompile Include="ReadNode.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Connection.h" />
+    <ClInclude Include="ContigNode.h" />
     <ClInclude Include="DataLoader.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="ReadNode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

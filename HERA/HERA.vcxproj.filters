@@ -38,5 +38,17 @@
     <ClInclude Include="DataLoader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Node.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ContigNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Connection.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
