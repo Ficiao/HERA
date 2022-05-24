@@ -34,6 +34,8 @@
 # Visual studio
 .vs
 /*/*vcxproj
+.sln
+.vcxproj*
 
 # CLion
 .idea
