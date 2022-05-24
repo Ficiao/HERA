@@ -3,9 +3,8 @@
 #include "DataLoader.h"
 #include <iostream>
 #include <vector>
-#include "ContigNode.h"
+#include "GraphNode.h"
 #include "Connection.h"
-#include "ReadNode.h"
 
 using namespace std;
 
@@ -37,10 +36,12 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
     Connection* _connection;
     vector<string> words{};
 
+    printf("Reading file: %s\n", _fileName);
+
     while (getline(_fin, _line)) {
         _lineCount++;
-        if (_lineCount % 1000==0) {
-            printf("%d\n",_lineCount);
+        if (_lineCount % 10000==0) {
+            printf("Lines read: %d\n",_lineCount);
         }
 
         size_t pos = 0;
@@ -50,42 +51,48 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             _line.erase(0, pos + _delimiter.length());
         }
         
-        index = GetIndexFromName(words[0]);
+        if (words[4].at(0)=='+') {
+            index = GetIndexFromName(words[0]);
+            _baseNode = &_nodes[index];
+            _baseNode->index = index;
+            _baseNode->isContig = _isContig;
+            _baseNode->size = stoi(words[1]);
+            _baseNode->hasBeenUsed = false;
 
-        _baseNode = &_nodes[index];
-        _baseNode->index = index;
-        _baseNode->isContig = _isContig;
-        _baseNode->size = stoi(words[1]);
+            index = GetIndexFromName(words[5]);
+            _targetNode = &_targetNodes[index];
+            _targetNode->index = index;
+            _targetNode->isContig = false;
+            _targetNode->size = stoi(words[6]);
+            _targetNode->hasBeenUsed = false;
 
-        index = GetIndexFromName(words[5]);
-        _targetNode = &_targetNodes[index];
-        _connection = new Connection();
-        _connection->_base = _baseNode;
-        _connection->_baseStart = stoi(words[2]);
-        _connection->_baseEnd = stoi(words[3]);
-        _connection->_relativeStrand = words[4].at(0);
-        _connection->_target = _targetNode;
-        _connection->_targetStart = stoi(words[7]);
-        _connection->_targetEnd = stoi(words[8]);
-        _connection->_residueMatches = stoi(words[9]);
-        _connection->_allignmentBlockLenth = stoi(words[10]);
-
-        _baseNode->connections.push_back(*_connection);
-
-        if (_isContig) {
             _connection = new Connection();
-            _connection->_base = _targetNode;
-            _connection->_baseStart = stoi(words[7]);
-            _connection->_baseEnd = stoi(words[8]);
-            _connection->_relativeStrand = words[4].at(0);
+            _connection->base = _baseNode;
+            _connection->baseStart = stoi(words[2]);
+            _connection->baseEnd = stoi(words[3]);
+            _connection->target = _targetNode;
+            _connection->targetStart = stoi(words[7]);
+            _connection->targetEnd = stoi(words[8]);
+            _connection->residueMatches = stoi(words[9]);
+            _connection->allignmentBlockLenth = stoi(words[10]);
 
-            _connection->_target = _baseNode;
-            _connection->_targetStart = stoi(words[2]);
-            _connection->_targetEnd = stoi(words[3]);
-            _connection->_residueMatches = stoi(words[9]);
-            _connection->_allignmentBlockLenth = stoi(words[10]);
+            
 
-            _targetNode->backwardsContigConnection.push_back(*_connection);
+            _baseNode->connections.push_back(*_connection);
+
+            if (_isContig) {
+                _connection = new Connection();
+                _connection->base = _targetNode;
+                _connection->baseStart = stoi(words[7]);
+                _connection->baseEnd = stoi(words[8]);
+                _connection->target = _baseNode;
+                _connection->targetStart = stoi(words[2]);
+                _connection->targetEnd = stoi(words[3]);
+                _connection->residueMatches = stoi(words[9]);
+                _connection->allignmentBlockLenth = stoi(words[10]);
+
+                _targetNode->backwardsContigConnection.push_back(*_connection);
+            }
         }
 
         words.clear();

@@ -1,6 +1,5 @@
 #include "DataLoader.h"
-#include "ReadNode.h"
-#include "ContigNode.h"
+#include "GraphNode.h"
 
 int main() {
 

@@ -2,13 +2,15 @@
 
 class Connection {
 public:
-	class GraphNode* _base;
-	int _baseStart;
-	int _baseEnd;
-	char _relativeStrand;
-	class GraphNode* _target;
-	int _targetStart;
-	int _targetEnd;
-	int _residueMatches;
-	int _allignmentBlockLenth;
+	class GraphNode* base;
+	int baseStart;
+	int baseEnd;
+	class GraphNode* target;
+	int targetStart;
+	int targetEnd;
+	int residueMatches;
+	int allignmentBlockLenth;
+	double overlapScore;
+	double extensionScore;
+	double sequenceIdentity;
 };
