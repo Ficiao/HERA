@@ -45,3 +45,6 @@ CMakeLists.txt
 # Builds
 */x64
 x64
+
+# Big paf files
+/HERA/overlap_reads_with_rc_ava_pb.paf
