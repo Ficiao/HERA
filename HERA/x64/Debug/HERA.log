@@ -1,3 +1,0 @@
-﻿  DataLoader.cpp
-D:\BioInf\HERA\HERA\DataLoader.cpp(134,34): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-  HERA.vcxproj -> D:\BioInf\HERA\x64\Debug\HERA.exe
