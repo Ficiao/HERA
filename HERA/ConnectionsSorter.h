@@ -2,6 +2,6 @@
 
 class ConnectionsSorter {
 public:
-    GraphNode* sortConnectionsByOverlapScore(GraphNode* _nodes);
-    GraphNode* sortConnectionsByExtensionScore(GraphNode* _nodes);
+    GraphNode *sortConnectionsByOverlapScore(GraphNode *_nodes, int size);
+    GraphNode *sortConnectionsByExtensionScore(GraphNode *_nodes, int size);
 };

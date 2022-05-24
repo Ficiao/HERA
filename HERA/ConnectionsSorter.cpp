@@ -1,9 +1,10 @@
 #include <algorithm>
+#include <cstdio>
 #include "ConnectionsSorter.h"
 #include "Connection.h"
 
-GraphNode *ConnectionsSorter::sortConnectionsByOverlapScore(GraphNode *_nodes) {
-    for (int i = 0; i < _nodes->size; ++i) {
+GraphNode *ConnectionsSorter::sortConnectionsByOverlapScore(GraphNode *_nodes, int size) {
+    for (int i = 1; i < size; ++i) {
         std::sort(_nodes[i].connections.begin(),
                   _nodes[i].connections.end(),
                   [](const Connection &left, const Connection &right) {
@@ -20,8 +21,8 @@ GraphNode *ConnectionsSorter::sortConnectionsByOverlapScore(GraphNode *_nodes) {
     return _nodes;
 }
 
-GraphNode *ConnectionsSorter::sortConnectionsByExtensionScore(GraphNode *_nodes) {
-    for (int i = 0; i < _nodes->size; ++i) {
+GraphNode *ConnectionsSorter::sortConnectionsByExtensionScore(GraphNode *_nodes, int size) {
+    for (int i = 1; i < size; ++i) {
         std::sort(_nodes[i].connections.begin(),
                   _nodes[i].connections.end(),
                   [](const Connection &left, const Connection &right) {
