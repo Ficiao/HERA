@@ -8,10 +8,9 @@
 
 using namespace std;
 
-GraphNode* DataLoader::LoadData(string _fileName, GraphNode* _targetNodes, bool _isContig) {
+GraphNode* DataLoader::LoadData(string _fileName, GraphNode* _targetNodes, bool _isContig, int _numberOfNodes) {
 
-    int _numberOfElems = IndexOfLastElem(_fileName);
-    _numberOfElems++;
+    int _numberOfElems = _numberOfNodes + 1;
 
     GraphNode* _nodes = new GraphNode[_numberOfElems];
     if (_targetNodes != NULL) {
@@ -36,11 +35,11 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
     Connection* _connection;
     vector<string> words{};
 
-    printf("Reading file: %s\n", _fileName);
+    printf("Reading file: %s\n", _fileName.c_str());
 
     while (getline(_fin, _line)) {
         _lineCount++;
-        if (_lineCount % 10000==0) {
+        if (_lineCount % 100000==0) {
             printf("Lines read: %d\n",_lineCount);
         }
 
@@ -110,47 +109,6 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
     }   
 
     _fin.close();
-}
-
-int DataLoader::IndexOfLastElem(std::string _fileName)
-{
-    ifstream _fin;
-    string _nameOfLast;
-
-    _fin.open(_fileName);
-    if (_fin.is_open()) {
-        _fin.seekg(-2, ios_base::end);                // go to one spot before the EOF
-
-        bool _keepLooping = true;
-        while (_keepLooping) {
-            char _character;
-            _fin.get(_character);                            // Get current byte's data
-
-            if ((int)_fin.tellg() <= 1) {             // If the data was at or before the 0th byte
-                _fin.seekg(0);                       // The first line is the last line
-                _keepLooping = false;                // So stop there
-            }
-            else if (_character == '\n') {                   // If the data was a newline
-                _keepLooping = false;                // Stop at the current position.
-            }
-            else {                                  // If the data was neither a newline nor at the 0 byte
-                _fin.seekg(-2, ios_base::cur);        // Move to the front of that data, then to the front of the data before it
-            }
-        }
-
-        string _lastLine;
-        string _lastLinePom;
-        getline(_fin, _lastLine);
-
-        while (getline(_fin, _lastLinePom)) {
-            _lastLine = _lastLinePom;
-        }
-        
-        _nameOfLast = _lastLine.substr(0, _lastLine.find("\t"));        
-        _fin.close();
-    }
-
-    return GetIndexFromName(_nameOfLast);
 }
 
 int DataLoader::GetIndexFromName(string _name) {
