@@ -75,8 +75,19 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             _connection->targetEnd = stoi(words[8]);
             _connection->residueMatches = stoi(words[9]);
             _connection->allignmentBlockLenth = stoi(words[10]);
-
             
+            double _sequenceIdentity = (double)(_connection->residueMatches / _connection->allignmentBlockLenth);
+            _connection->sequenceIdentity = _sequenceIdentity;
+
+            //Je li OL1==OL2???
+            double _overlapScore = ((double)(_connection->baseEnd - _connection->baseStart + _connection->targetEnd - _connection->targetStart));
+            _overlapScore = _overlapScore * _sequenceIdentity;
+            _overlapScore = _overlapScore / 2;
+            _connection->overlapScore = _overlapScore;            
+
+            double _extensionScore = _overlapScore + ((double)(_targetNode->size - _connection->targetEnd)) / 2;
+            _extensionScore = _extensionScore - ((double)((_baseNode->size - _connection->baseEnd) + _connection->targetStart)) / 2;
+            _connection->extensionScore = _extensionScore;
 
             _baseNode->connections.push_back(*_connection);
 
