@@ -1,14 +1,28 @@
 #include "DataLoader.h"
 #include "GraphNode.h"
 #include "ConnectionsSorter.h"
+#include "Buckets.h"
 
 int main() {
-    int nodesSize = 9284;
+    int _readNodesNumber = 9284;
+    int _contigNodesNumber = 6;
+    int _monteCarloHyperparameter = 4;
 
     DataLoader* _dataLoader = new DataLoader();
-    GraphNode* _readNodes = _dataLoader->LoadData("overlap_reads_rc_ava_pb.paf", NULL, false, nodesSize);
-	GraphNode* _contigNodes = _dataLoader->LoadData("overlaps_reads_contigs_rc_ava_pb.paf", _readNodes, true, 6);
+    GraphNode* _readNodes = _dataLoader->LoadData("overlap_reads_rc_ava_pb.paf", NULL, false, _readNodesNumber);
+	GraphNode* _contigNodes = _dataLoader->LoadData("overlaps_reads_contigs_rc_ava_pb.paf", _readNodes, true, _contigNodesNumber);
 
+    Buckets* _buckets = new Buckets();
     ConnectionsSorter* _connectionsSorter = new ConnectionsSorter();
-    _connectionsSorter->sortConnectionsByOverlapScore(_readNodes, nodesSize);
+
+    _connectionsSorter->sortConnectionsByOverlapScore(_readNodes, _readNodesNumber);
+    _buckets->FillBucketsDeterministic(_readNodes, _contigNodes, _contigNodesNumber);
+
+    _connectionsSorter->sortConnectionsByExtensionScore(_readNodes, _readNodesNumber);
+    _buckets->FillBucketsDeterministic(_readNodes, _contigNodes, _contigNodesNumber);
+
+    _buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber, _monteCarloHyperparameter);
+    
+    Path* _winningPath = _buckets->SelectWinner();
+
 }
