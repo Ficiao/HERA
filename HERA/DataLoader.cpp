@@ -88,20 +88,28 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             _extensionScore = _extensionScore - ((double)((_baseNode->size - _connection->baseEnd) + _connection->targetStart)) / 2;
             _connection->extensionScore = _extensionScore;
 
-            _baseNode->connections.push_back(*_connection);
+            if ((_connection->baseEnd - _connection->baseStart < _baseNode->size - 1) && (_connection->targetEnd - _connection->targetStart < _targetNode->size))
+            {
 
-            if (_isContig) {
-                _connection = new Connection();
-                _connection->base = _targetNode;
-                _connection->baseStart = stoi(words[7]);
-                _connection->baseEnd = stoi(words[8]);
-                _connection->target = _baseNode;
-                _connection->targetStart = stoi(words[2]);
-                _connection->targetEnd = stoi(words[3]);
-                _connection->residueMatches = stoi(words[9]);
-                _connection->allignmentBlockLenth = stoi(words[10]);
 
-                _targetNode->backwardsContigConnection.push_back(*_connection);
+                _baseNode->connections.push_back(*_connection);
+
+                if (_isContig) {
+                    _connection = new Connection();
+                    _connection->base = _targetNode;
+                    _connection->baseStart = stoi(words[7]);
+                    _connection->baseEnd = stoi(words[8]);
+                    _connection->target = _baseNode;
+                    _connection->targetStart = stoi(words[2]);
+                    _connection->targetEnd = stoi(words[3]);
+                    _connection->residueMatches = stoi(words[9]);
+                    _connection->allignmentBlockLenth = stoi(words[10]);
+
+                    _targetNode->backwardsContigConnection.push_back(*_connection);
+                }
+            }
+            else {
+                delete _connection;
             }
         }
 
