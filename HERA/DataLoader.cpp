@@ -25,6 +25,7 @@ GraphNode* DataLoader::LoadData(string _fileName, GraphNode* _targetNodes, bool 
 
 void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _fileName, bool _isContig) {
     int _lineCount = 0;
+    int _numberOfConnections = 0;
     ifstream _fin;
     string _line;
     string _delimiter = "\t";
@@ -90,8 +91,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
 
             if ((_connection->baseEnd - _connection->baseStart < _baseNode->size - 1) && (_connection->targetEnd - _connection->targetStart < _targetNode->size))
             {
-
-
+                _numberOfConnections++;
                 _baseNode->connections.push_back(*_connection);
 
                 if (_isContig) {
@@ -117,6 +117,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
     }   
 
     _fin.close();
+    printf("Number of connections made: %d\n", _numberOfConnections);
 }
 
 int DataLoader::GetIndexFromName(string _name) {
