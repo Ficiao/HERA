@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 #include "Bucket.h"
 
 class Buckets {
@@ -18,5 +17,5 @@ public:
 
 	void FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes);
 	void FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes, int _monteCarloHyperparameter);
-	Path* SelectWinner();
+	void SelectWinner();
 };

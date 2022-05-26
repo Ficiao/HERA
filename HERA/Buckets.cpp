@@ -1,6 +1,5 @@
 #include "Buckets.h"
-#include "Path.h"
-#include <vector>
+#include "Connection.h"
 
 using namespace std;
 
@@ -8,10 +7,13 @@ void Buckets::FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contig
 	Path* _path;
 	bool _success;
 
-	for (int i = 0; i < _numberOfContigNodes; i++) {
-		for (int j = 0; j < _contigNodes[i].connections.size(); j++) {
+	//za svaku contigu, za svaki direktni overlap koji taj contiga ima sa readovima pokusaj sloziti put
+	for (int i = 1; i <= _numberOfContigNodes; i++) {
+		for (int j = 1; j <= _contigNodes[i].connections.size(); j++) {
 			_path = new Path();
 			_success = _path->CreateDeterministicPath(_readNodes, &_contigNodes[i], j);
+
+			//ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
 			if (_success == true) {
 				int _startContigIndex = _path->pathNodes.front()->index;
 				int _endContigIndex = _path->pathNodes.back()->index;
@@ -35,7 +37,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNod
 
 }
 
-Path* Buckets::SelectWinner() {
+void Buckets::SelectWinner() {
 
-	return NULL;
+	return;
 }

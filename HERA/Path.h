@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 #include "GraphNode.h"
 
 class Path {
@@ -19,6 +18,6 @@ public:
 	bool CreateMonteCarloPath(GraphNode* _readNodes, GraphNode* _contigNode, int _indexOfStartingRead);
 
 private:
-	bool RekurzCreateDeterministicPath(GraphNode* _currentNode);
-	bool RekurzCreateMonteCarloPath(GraphNode* _currentNode);
+	bool RekurzCreateDeterministicPath(GraphNode* _currentNode, int _depth);
+	bool RekurzCreateMonteCarloPath(GraphNode* _currentNode, int _depth);
 };

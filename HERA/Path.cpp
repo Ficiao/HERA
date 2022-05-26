@@ -12,7 +12,7 @@ bool Path::CreateDeterministicPath(GraphNode* _readNodes, GraphNode* _contigNode
 
 	pathNodes.insert(pathNodes.begin(), _contigNode);
 
-	if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target) == true) {
+	if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target, 0) == true) {
 		pathNodes.insert(pathNodes.begin(), _contigNode);
 		averageSequenceIdentity = _contigNode->connections.at(_indexOfStartingRead).sequenceIdentity;
 		nuberOfNodes++;
@@ -28,9 +28,11 @@ bool Path::CreateDeterministicPath(GraphNode* _readNodes, GraphNode* _contigNode
 	return false;;
 }
 
-bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode) {
+bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode, int _depth) {
 	bool _pathCreated;
-
+	if (_depth > 50000) {
+		return false;
+	}
 	_currentNode->hasBeenUsed = true;
 
 	for (int i = 0; i < _currentNode->backwardsContigConnection.size(); i++) {
@@ -46,7 +48,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode) {
 
 	for (int i = 0; i < _currentNode->connections.size(); i++) {
 		if (_currentNode->connections.at(i).target->hasBeenUsed == false) {
-			_pathCreated = RekurzCreateDeterministicPath(_currentNode->connections.at(i).target);
+			_pathCreated = RekurzCreateDeterministicPath(_currentNode->connections.at(i).target, _depth + 1);
 			if (_pathCreated == true) {
 				pathNodes.insert(pathNodes.begin(), _currentNode);
 				averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
@@ -65,7 +67,7 @@ bool Path::CreateMonteCarloPath(GraphNode* _readNodes, GraphNode* _contigNode, i
 	return false;
 }
 
-bool Path::RekurzCreateMonteCarloPath(GraphNode* _currentNode) {
+bool Path::RekurzCreateMonteCarloPath(GraphNode* _currentNode, int _depth) {
 
 	return false;
 }
