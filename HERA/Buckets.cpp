@@ -9,6 +9,14 @@ void Buckets::FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contig
 
 	//za svaku contigu, za svaki direktni overlap koji taj contiga ima sa readovima pokusaj sloziti put
 	for (int i = 1; i <= _numberOfContigNodes; i++) {
+
+		if (i <= _numberOfContigNodes / 2) {
+			_contigNodes[i + (_numberOfContigNodes / 2)].hasBeenUsed = true;
+		}
+		else {
+			_contigNodes[i - (_numberOfContigNodes / 2)].hasBeenUsed = true;
+		}
+
 		for (int j = 0; j < _contigNodes[i].connections.size(); j++) {
 			_path = new Path();
 			_success = _path->CreateDeterministicPath(_readNodes, &_contigNodes[i], j);
@@ -24,10 +32,16 @@ void Buckets::FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contig
 						break;
 					}
 				}
-
 			}
-
 		}
+
+		if (i <= _numberOfContigNodes / 2) {
+			_contigNodes[i + (_numberOfContigNodes / 2)].hasBeenUsed = false;
+		}
+		else {
+			_contigNodes[i - (_numberOfContigNodes / 2)].hasBeenUsed = false;
+		}
+
 	}
 
 
