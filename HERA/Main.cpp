@@ -2,6 +2,7 @@
 #include "GraphNode.h"
 #include "ConnectionsSorter.h"
 #include "Buckets.h"
+#include "FinalContigConstructor.h"
 
 int main() {
     int _readNodesNumber = 9284;
@@ -24,5 +25,8 @@ int main() {
     //_buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber, _monteCarloHyperparameter);
     
     _buckets->SelectWinner();
+
+    FinalContigConstructor* finalContigConstructor = new FinalContigConstructor();
+    finalContigConstructor->construct(_buckets->buckets, "ecoli_test_reads_with_complements.fasta", "ecoli_test_contigs_with_complements.fasta", "result");
 
 }

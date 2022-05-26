@@ -74,9 +74,9 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             _connection->targetStart = stoi(words[7]);
             _connection->targetEnd = stoi(words[8]);
             _connection->residueMatches = stoi(words[9]);
-            _connection->allignmentBlockLenth = stoi(words[10]);
+            _connection->allignmentBlockLength = stoi(words[10]);
             
-            double _sequenceIdentity = (double)(_connection->residueMatches / _connection->allignmentBlockLenth);
+            double _sequenceIdentity = (double)(_connection->residueMatches / _connection->allignmentBlockLength);
             _connection->sequenceIdentity = _sequenceIdentity;
 
             //Je li OL1==OL2???
@@ -104,7 +104,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
                     _connection->targetStart = stoi(words[2]);
                     _connection->targetEnd = stoi(words[3]);
                     _connection->residueMatches = stoi(words[9]);
-                    _connection->allignmentBlockLenth = stoi(words[10]);
+                    _connection->allignmentBlockLength = stoi(words[10]);
 
                     _targetNode->backwardsContigConnection.push_back(*_connection);
                 }

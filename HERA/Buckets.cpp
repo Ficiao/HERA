@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "Buckets.h"
 #include "Connection.h"
 
@@ -38,6 +41,12 @@ void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNod
 }
 
 void Buckets::SelectWinner() {
+    // mozda koristit novi random generator
+    srand(time(nullptr));
 
-	return;
+    for (auto & bucket : buckets) {
+        int num = abs(rand()) % bucket.paths.size();
+        bucket.winningPathIndex = num;
+        printf("For bucket %d %d winner path is with index %d\n", bucket.startContigIndex, bucket.endContigIndex, bucket.winningPathIndex);
+    }
 }

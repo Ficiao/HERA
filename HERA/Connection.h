@@ -9,7 +9,7 @@ public:
 	int targetStart;
 	int targetEnd;
 	int residueMatches;
-	int allignmentBlockLenth;
+	int allignmentBlockLength;
 	double overlapScore;
 	double extensionScore;
 	double sequenceIdentity;

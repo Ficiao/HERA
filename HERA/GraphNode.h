@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 
 class GraphNode {
 public:
@@ -7,6 +8,7 @@ public:
 	int size;
 	bool isContig;
 	bool hasBeenUsed;
+    std::string read;
 	std::vector<class Connection> connections;
 	std::vector<class Connection> backwardsContigConnection;
 };
