@@ -41,7 +41,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode) {
 			averageSequenceIdentity += _currentNode->backwardsContigConnection.at(i).sequenceIdentity;
 			pathNodes.insert(pathNodes.begin(), _currentNode);
 			averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
-			pathLength += _currentNode->size - _currentNode->connections.at(i).baseEnd;
+			pathLength += _currentNode->size - _currentNode->connections.at(i).baseStart;
 			//treba li dodati i duljinu contiga?
 			return true;
 		}
@@ -54,7 +54,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode) {
 			if (_pathCreated == true) {
 				pathNodes.insert(pathNodes.begin(), _currentNode);
 				averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
-				pathLength += _currentNode->size - _currentNode->connections.at(i).baseEnd;
+				pathLength += _currentNode->size - _currentNode->connections.at(i).baseStart;
 				return true;
 			}
 		}
