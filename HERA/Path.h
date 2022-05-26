@@ -4,13 +4,13 @@
 class Path {
 public:
 	int pathLength;
-	int nuberOfNodes;
+	int depth;
 	double averageSequenceIdentity;
 	std::vector<GraphNode*> pathNodes;
 
 	Path() {
+		depth = 0;
 		pathLength = 0;
-		nuberOfNodes = 0;
 		averageSequenceIdentity = -1;
 	}
 
@@ -18,6 +18,6 @@ public:
 	bool CreateMonteCarloPath(GraphNode* _readNodes, GraphNode* _contigNode, int _indexOfStartingRead);
 
 private:
-	bool RekurzCreateDeterministicPath(GraphNode* _currentNode, int _depth);
-	bool RekurzCreateMonteCarloPath(GraphNode* _currentNode, int _depth);
+	bool RekurzCreateDeterministicPath(GraphNode* _currentNode);
+	bool RekurzCreateMonteCarloPath(GraphNode* _currentNode);
 };

@@ -10,13 +10,11 @@ bool Path::CreateDeterministicPath(GraphNode* _readNodes, GraphNode* _contigNode
 
 	//pathLength = pathLength + _contigNode->connections.at(_indexOfStartingRead).baseEnd;
 
-	pathNodes.insert(pathNodes.begin(), _contigNode);
-
-	if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target, 0) == true) {
+	depth = 0;
+	if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target) == true) {
 		pathNodes.insert(pathNodes.begin(), _contigNode);
-		averageSequenceIdentity = _contigNode->connections.at(_indexOfStartingRead).sequenceIdentity;
-		nuberOfNodes++;
-		averageSequenceIdentity =(double) (averageSequenceIdentity / nuberOfNodes);
+		averageSequenceIdentity += _contigNode->connections.at(_indexOfStartingRead).sequenceIdentity;
+		averageSequenceIdentity =(double) (averageSequenceIdentity / pathNodes.size());
 
 		for (int i = 0; i < pathNodes.size(); i++) {
 			pathNodes.at(i)->hasBeenUsed = false;
@@ -28,9 +26,11 @@ bool Path::CreateDeterministicPath(GraphNode* _readNodes, GraphNode* _contigNode
 	return false;;
 }
 
-bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode, int _depth) {
+bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode) {
 	bool _pathCreated;
-	if (_depth > 50000) {
+	depth++;
+
+	if (depth > 5000) {
 		return false;
 	}
 	_currentNode->hasBeenUsed = true;
@@ -39,21 +39,23 @@ bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode, int _depth) {
 		if (_currentNode->backwardsContigConnection.at(i).target->hasBeenUsed == false) {
 			pathNodes.insert(pathNodes.begin(), _currentNode->backwardsContigConnection.at(i).target);
 			averageSequenceIdentity += _currentNode->backwardsContigConnection.at(i).sequenceIdentity;
-			nuberOfNodes++;
+			pathNodes.insert(pathNodes.begin(), _currentNode);
+			averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
+			pathLength += _currentNode->size - _currentNode->connections.at(i).baseEnd;
 			//treba li dodati i duljinu contiga?
 			return true;
 		}
 	}
 
 
-	for (int i = 0; i < _currentNode->connections.size(); i++) {
+	for (int i = 0; i < _currentNode->connections.size() && depth <= 5000; i++) {
 		if (_currentNode->connections.at(i).target->hasBeenUsed == false) {
-			_pathCreated = RekurzCreateDeterministicPath(_currentNode->connections.at(i).target, _depth + 1);
+			_pathCreated = RekurzCreateDeterministicPath(_currentNode->connections.at(i).target);
 			if (_pathCreated == true) {
 				pathNodes.insert(pathNodes.begin(), _currentNode);
 				averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
-				nuberOfNodes++;
 				pathLength += _currentNode->size - _currentNode->connections.at(i).baseEnd;
+				return true;
 			}
 		}
 	}
@@ -67,7 +69,7 @@ bool Path::CreateMonteCarloPath(GraphNode* _readNodes, GraphNode* _contigNode, i
 	return false;
 }
 
-bool Path::RekurzCreateMonteCarloPath(GraphNode* _currentNode, int _depth) {
+bool Path::RekurzCreateMonteCarloPath(GraphNode* _currentNode) {
 
 	return false;
 }
