@@ -89,7 +89,8 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             _extensionScore = _extensionScore - ((double)((_baseNode->size - _connection->baseEnd) + _connection->targetStart)) / 2;
             _connection->extensionScore = _extensionScore;
 
-            if ((_connection->baseEnd - _connection->baseStart < _baseNode->size - 1) && (_connection->targetEnd - _connection->targetStart < _targetNode->size))
+            if ((_connection->baseEnd - _connection->baseStart < _baseNode->size - 1) 
+                && (_connection->targetEnd - _connection->targetStart < _targetNode->size - 1))
             {
                 _numberOfConnections++;
                 _baseNode->connections.push_back(*_connection);
