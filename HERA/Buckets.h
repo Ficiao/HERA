@@ -1,15 +1,21 @@
 #pragma once
-#include <vector>
-#include "Path.h"
+#include "Bucket.h"
 
 class Buckets {
 public: 
-	int _averageBucketLength1SequenceIdentity;
-	int _averageBucketLength2SequenceIdentity;
-	std::vector<Path> _bucketLength1;
-	std::vector<Path> _bucketLength2;
+	std::vector<Bucket> buckets;
 
-	void FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contigNode, int _numberOfContigNodes);
-	void FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNode, int _numberOfContigNodes, int _monteCarloHyperparameter);
-	Path* SelectWinner();
+	Buckets(int _numberOfContigs) {
+		for (int i = 1; i <= _numberOfContigs; i++) {
+			for (int j = 1; j < _numberOfContigs; j++) {
+				if (j != i) {
+					buckets.push_back(*new Bucket(i, j));
+				}
+			}			
+		}
+	}
+
+	void FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes);
+	void FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes, int _monteCarloHyperparameter);
+	void SelectWinner();
 };

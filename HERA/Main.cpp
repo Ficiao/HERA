@@ -12,7 +12,7 @@ int main() {
     GraphNode* _readNodes = _dataLoader->LoadData("overlap_reads_rc_ava_pb.paf", NULL, false, _readNodesNumber);
 	GraphNode* _contigNodes = _dataLoader->LoadData("overlaps_reads_contigs_rc_ava_pb.paf", _readNodes, true, _contigNodesNumber);
 
-    Buckets* _buckets = new Buckets();
+    Buckets* _buckets = new Buckets(_contigNodesNumber);
     ConnectionsSorter* _connectionsSorter = new ConnectionsSorter();
 
     _connectionsSorter->sortConnectionsByOverlapScore(_readNodes, _readNodesNumber);
@@ -21,8 +21,8 @@ int main() {
     _connectionsSorter->sortConnectionsByExtensionScore(_readNodes, _readNodesNumber);
     _buckets->FillBucketsDeterministic(_readNodes, _contigNodes, _contigNodesNumber);
 
-    _buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber, _monteCarloHyperparameter);
+    //_buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber, _monteCarloHyperparameter);
     
-    Path* _winningPath = _buckets->SelectWinner();
+    _buckets->SelectWinner();
 
 }
