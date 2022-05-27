@@ -6,10 +6,6 @@ using namespace std;
 bool Path::CreateDeterministicPath(GraphNode* _readNodes, GraphNode* _contigNode, int _indexOfStartingRead) {
 	_contigNode->hasBeenUsed = true;
 
-	//todo: dodati da se postavi na true i od komplementa
-
-	//pathLength = pathLength + _contigNode->connections.at(_indexOfStartingRead).baseEnd;
-
 	depth = 0;
 	if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target) == true) {
 		pathNodes.insert(pathNodes.begin(), _contigNode);
@@ -23,6 +19,7 @@ bool Path::CreateDeterministicPath(GraphNode* _readNodes, GraphNode* _contigNode
 		return true;
 	}
 
+	_contigNode->hasBeenUsed = false;
 	return false;;
 }
 
@@ -42,7 +39,6 @@ bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode) {
 			pathNodes.insert(pathNodes.begin(), _currentNode);
 			averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
 			pathLength += _currentNode->connections.at(i).baseStart;
-			//treba li dodati i duljinu contiga?
 			return true;
 		}
 	}
