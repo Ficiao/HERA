@@ -48,3 +48,9 @@ x64
 
 # Big paf files
 /HERA/overlap_reads_with_rc_ava_pb.paf
+HERA/Debug/HERA.exe.recipe
+HERA/Debug/HERA.ilk
+HERA/Debug/HERA.pdb
+HERA/Debug/HERA.log
+HERA/Debug/vc143.pdb
+*.tlog

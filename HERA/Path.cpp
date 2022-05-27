@@ -44,7 +44,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode) {
 	}
 
 
-	for (int i = 0; i < _currentNode->connections.size() && depth <= 5000; i++) {
+	for (int i = 0; i < _currentNode->connections.size() && depth <= 50000; i++) {
 		if (_currentNode->connections.at(i).target->hasBeenUsed == false) {
 			_pathCreated = RekurzCreateDeterministicPath(_currentNode->connections.at(i).target);
 			if (_pathCreated == true) {
