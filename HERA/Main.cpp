@@ -23,10 +23,11 @@ int main() {
     _buckets->FillBucketsDeterministic(_readNodes, _contigNodes, _contigNodesNumber);
 
     //_buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber, _monteCarloHyperparameter);
-    
-    _buckets->SelectWinner();
+
+    std::vector<Path> _paths = _buckets->SelectWinner(_contigNodesNumber);
 
     FinalContigConstructor* finalContigConstructor = new FinalContigConstructor();
-    finalContigConstructor->construct(_buckets->buckets, "ecoli_test_reads_with_complements.fasta", "ecoli_test_contigs_with_complements.fasta", "result");
+    finalContigConstructor->construct(_paths, "ecoli_test_reads_with_complements.fasta",
+                                      "ecoli_test_contigs_with_complements.fasta", "result");
 
 }

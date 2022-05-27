@@ -1,6 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include <algorithm>
 #include "Buckets.h"
 #include "Connection.h"
 
@@ -56,13 +55,42 @@ void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNod
 
 }
 
-void Buckets::SelectWinner() {
-    // mozda koristit novi random generator
-    srand(time(nullptr));
+std::vector<Path> Buckets::SelectWinner(int numberOfContigs) {
+    std::vector<Path> winningPaths;
 
-    for (auto & bucket : buckets) {
-        int num = abs(rand()) % bucket.paths.size();
-        bucket.winningPathIndex = num;
-        printf("For bucket %d %d winner path is with index %d\n", bucket.startContigIndex, bucket.endContigIndex, bucket.winningPathIndex);
+    for (int i = 1; i < numberOfContigs / 2; ++i) {
+        std::vector<Bucket> contigBuckets;
+
+        for (auto &bucket: buckets) {
+            if (bucket.startContigIndex == i && bucket.endContigIndex > i) {
+                contigBuckets.push_back(bucket);
+            }
+        }
+
+        auto bucketIt = std::max_element(contigBuckets.begin(),
+                                         contigBuckets.end(),
+                                         [](const Bucket &left, const Bucket &right) {
+                                             return left.paths.size() < right.paths.size();
+                                         });
+
+        long bucketIndex = std::distance(contigBuckets.begin(), bucketIt);
+        Bucket winninContigBucket = contigBuckets[bucketIndex];
+
+        auto pathIt = std::max_element(winninContigBucket.paths.begin(),
+                                       winninContigBucket.paths.end(),
+                                       [](const Path &left, const Path &right) {
+                                           return left.averageSequenceIdentity < right.averageSequenceIdentity;
+                                       });
+
+        long pathIndex = std::distance(winninContigBucket.paths.begin(), pathIt);
+        Path winningBucketPath = winninContigBucket.paths[pathIndex];
+
+        printf("For bucket %d %d winner path is with pathIndex %ld and length %d\n", winninContigBucket.startContigIndex,
+               winninContigBucket.endContigIndex,
+               pathIndex,
+               winningBucketPath.pathLength);
+
+        winningPaths.push_back(winningBucketPath);
     }
+    return winningPaths;
 }
