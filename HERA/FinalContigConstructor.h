@@ -1,20 +1,17 @@
+#include <map>
 #include "Buckets.h"
 #include "Connection.h"
 
 class FinalContigConstructor {
-    Path finalPath;
 public:
-    void construct(std::vector<Bucket> buckets, std::string readsFilename, std::string contigsFilename,
-                   std::string resultFilename);
+    std::map<int, std::string> reads;
+    std::map<int, std::string> contigs;
 
-    void writeToFile(std::string filename);
+    void construct(std::vector<Path> paths, std::string readsFilename, std::string contigsFilename,
+              std::string resultFilename);
 
 private:
-    void addToFullPath(Bucket bucket);
-
-    void getReadings(std::string filename);
+    void loadFile(std::string filename);
 
     Connection findConnectionWithNode(int i, std::vector<Connection> connections) const;
-
-    GraphNode *findNodeWithIndex(int i, bool contig) const;
 };

@@ -24,5 +24,5 @@ public:
 
 	void FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes);
 	void FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes, int _monteCarloHyperparameter);
-	void SelectWinner();
+	std::vector<Path> SelectWinner(int numberOfContigs);
 };
