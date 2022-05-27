@@ -14,8 +14,7 @@ FinalContigConstructor::construct(std::vector<Bucket> buckets, std::string reads
         auto it = std::find_if(buckets.begin(),
                                buckets.end(),
                                [i, numberOfContigs](const Bucket &bucket) {
-                                   return bucket.startContigIndex == i and
-                                          bucket.endContigIndex == (i < numberOfContigs ? i + 1 : 1);
+                                   return bucket.startContigIndex == i && bucket.endContigIndex == (i < numberOfContigs ? i + 1 : 1);
                                });
         // TODO zbog ovoga mozda treba dodat zadnji bucket da bude prazni, trenutno ne radi probleme
         if (it != buckets.end()) {
@@ -99,7 +98,7 @@ void FinalContigConstructor::getReadings(std::string filename) {
             indexFromFile = dataLoader->GetIndexFromName(_line);
             node = findNodeWithIndex(indexFromFile, false);
 
-            if (node->index != 0 and getline(_fin, _line)) {
+            if (node->index != 0 && getline(_fin, _line)) {
                 _lineCount++;
                 node->read = _line;
             }
@@ -107,7 +106,7 @@ void FinalContigConstructor::getReadings(std::string filename) {
             indexFromFile = dataLoader->GetIndexFromName(_line);
             node = findNodeWithIndex(indexFromFile, true);
 
-            if (node->index != 0 and getline(_fin, _line)) {
+            if (node->index != 0 && getline(_fin, _line)) {
                 _lineCount++;
                 node->read = _line;
             }
@@ -128,8 +127,8 @@ GraphNode *FinalContigConstructor::findNodeWithIndex(int i, bool contig) const {
                                    printf("IT'S A CONTIG");
                                }
 //                                printf("full %s, is contig %s\n", (node->index == i and node->contig == contig) ? "true" : "false", contig ? "true" : "false");
-                               return (node->index == i and
-                                       ((node->isContig and contig) or (!node->isContig and !contig)));
+                               return (node->index == i &&
+                                       ((node->isContig && contig) || (!node->isContig && !contig)));
                            });
     long index = std::distance(nodes.begin(), it);
 

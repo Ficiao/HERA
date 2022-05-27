@@ -18,13 +18,15 @@ void Buckets::FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contig
 
 			//ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
 			if (_success == true) {
-				int _startContigIndex = _path->pathNodes.front()->index;
-				int _endContigIndex = _path->pathNodes.back()->index;
+				if (_path->averageSequenceIdentity > 0.85f) {
+					int _startContigIndex = _path->pathNodes.front()->index;
+					int _endContigIndex = _path->pathNodes.back()->index;
 
-				for (int k = 0; k < buckets.size(); k++) {
-					if (buckets.at(k).startContigIndex == _startContigIndex && buckets.at(k).endContigIndex==_endContigIndex) {
-						buckets.at(k).paths.push_back(*_path);
-						break;
+					for (int k = 0; k < buckets.size(); k++) {
+						if (buckets.at(k).startContigIndex == _startContigIndex && buckets.at(k).endContigIndex == _endContigIndex) {
+							buckets.at(k).paths.push_back(*_path);
+							break;
+						}
 					}
 				}
 

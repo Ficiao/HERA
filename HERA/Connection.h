@@ -1,4 +1,5 @@
 #pragma once
+#include "GraphNode.h"
 
 class Connection {
 public:
