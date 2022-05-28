@@ -46,8 +46,6 @@ void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contig
         }
 
     }
-
-
 }
 
 void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes, int _monteCarloHyperparameter) {
@@ -62,7 +60,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNod
 	bool _success;
 
 	while (_numberOfStochasticPaths < _numberOfDeterministicPaths) {
-	    printf("Iterating through contigs\n");
+//	    printf("Iterating through contigs\n");
 
 		for (int i = 1; i <= _numberOfContigNodes; i++) {
 
@@ -80,7 +78,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNod
 			//ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
 			if (_success == true) {
 				_numberOfStochasticPaths++;
-//				if (_path->averageSequenceIdentity > 0.85f) {
+				if (_path->averageSequenceIdentity > 0.85f) {
 					int _startContigIndex = _path->pathNodes.front()->index;
 					int _endContigIndex = _path->pathNodes.back()->index;
 
@@ -90,7 +88,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNod
 							break;
 						}
 					}
-//				}
+				}
 			}
 			
 

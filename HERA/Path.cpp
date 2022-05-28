@@ -71,7 +71,7 @@ bool Path::CreateMonteCarloPath(GraphNode *_readNodes, GraphNode *_contigNode) {
     averageSequenceIdentity = 0;
 
     depth = 0;
-    printf("Generating for contig %d \n", _contigNode->index);
+//    printf("Generating for contig %d \n", _contigNode->index);
     if (RekurzCreateMonteCarloPath(_contigNode)) {
         pathNodes.insert(pathNodes.begin(), _contigNode);
         averageSequenceIdentity = (double) (averageSequenceIdentity / pathNodes.size());
@@ -91,7 +91,7 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode) {
     bool _pathCreated;
     depth++;
 
-    if (depth > 100) {
+    if (depth > 5000) {
         return false;
     }
 
@@ -125,7 +125,7 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode) {
         start = end;
     }
 
-    while (depth <= 100) {
+    while (depth <= 5000) {
         // setup for random number generation
         std::random_device rd; // obtain a random number from hardware
         std::mt19937 gen(rd()); // seed the generator
@@ -143,9 +143,8 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode) {
 
         Connection connection = probabilites[index].connection;
 
-//        printf("Found Range with index %d and %f - %f, random num %f\n", index, probabilites[index].start, probabilites[index].end, random);
         if (index >= probabilites.size() - 1) {
-            continue;
+            return false;
         }
 
         if (!connection.target->hasBeenUsed) {
@@ -156,6 +155,8 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode) {
                 pathLength += connection.baseStart;
                 return true;
             }
+        } else {
+            depth++;
         }
     }
 
