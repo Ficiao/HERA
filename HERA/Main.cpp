@@ -7,7 +7,6 @@
 int main() {
     int _readNodesNumber = 9284;
     int _contigNodesNumber = 6;
-    int _monteCarloHyperparameter = 4;
 
     DataLoader* _dataLoader = new DataLoader();
     GraphNode* _readNodes = _dataLoader->LoadData("overlap_reads_rc_ava_pb.paf", NULL, false, _readNodesNumber);
@@ -22,7 +21,7 @@ int main() {
     _connectionsSorter->sortConnectionsByExtensionScore(_readNodes, _readNodesNumber);
     _buckets->FillBucketsDeterministic(_readNodes, _contigNodes, _contigNodesNumber);
 
-    _buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber, _monteCarloHyperparameter);
+    _buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber);
 
     std::vector<Path> _paths = _buckets->SelectWinner(_contigNodesNumber);
 

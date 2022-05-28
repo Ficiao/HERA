@@ -24,7 +24,7 @@ void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contig
 
             //ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
             if (_success == true) {
-                if (_path->averageSequenceIdentity > 0.85f) {
+                if (_path->averageSequenceIdentity > 0.5f) {
                     int _startContigIndex = _path->pathNodes.front()->index;
                     int _endContigIndex = _path->pathNodes.back()->index;
 
@@ -48,7 +48,7 @@ void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contig
     }
 }
 
-void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes, int _monteCarloHyperparameter) {
+void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes) {
 	int _numberOfDeterministicPaths = 0;
 
 	for (int i = 0; i < buckets.size(); i++) {
@@ -76,9 +76,9 @@ void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNod
 			_success = _path->CreateMonteCarloPath(_readNodes, &_contigNodes[i]);
 
 			//ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
-			if (_success == true) {
-				_numberOfStochasticPaths++;
-				if (_path->averageSequenceIdentity > 0.85f) {
+			if (_success == true) {				
+				if (_path->averageSequenceIdentity > 0.5f) {
+                    _numberOfStochasticPaths++;
 					int _startContigIndex = _path->pathNodes.front()->index;
 					int _endContigIndex = _path->pathNodes.back()->index;
 

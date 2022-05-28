@@ -1,11 +1,7 @@
-#include <numeric>
-#include <map>
-#include <random>
-#include <algorithm>
 #include <stdio.h>
 #include "Path.h"
 #include "Connection.h"
-#include "Range.h"
+#include <time.h>
 
 using namespace std;
 
@@ -16,7 +12,7 @@ bool Path::CreateDeterministicPath(GraphNode *_readNodes, GraphNode *_contigNode
     if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target) == true) {
         pathNodes.insert(pathNodes.begin(), _contigNode);
         averageSequenceIdentity += _contigNode->connections.at(_indexOfStartingRead).sequenceIdentity;
-        averageSequenceIdentity = (double) (averageSequenceIdentity / pathNodes.size());
+        averageSequenceIdentity = (double) (averageSequenceIdentity / (pathNodes.size() - 1));
 
         for (int i = 0; i < pathNodes.size(); i++) {
             pathNodes.at(i)->hasBeenUsed = false;
@@ -33,7 +29,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode) {
     bool _pathCreated;
     depth++;
 
-    if (depth > 5000) {
+    if (depth > 100000) {
         return false;
     }
     _currentNode->hasBeenUsed = true;
@@ -43,14 +39,14 @@ bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode) {
             pathNodes.insert(pathNodes.begin(), _currentNode->backwardsContigConnection.at(i).target);
             averageSequenceIdentity += _currentNode->backwardsContigConnection.at(i).sequenceIdentity;
             pathNodes.insert(pathNodes.begin(), _currentNode);
-            averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
-            pathLength += _currentNode->connections.at(i).baseStart;
+            //averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
+            //pathLength += _currentNode->connections.at(i).baseStart;
             return true;
         }
     }
 
 
-    for (int i = 0; i < _currentNode->connections.size() && depth <= 50000; i++) {
+    for (int i = 0; i < _currentNode->connections.size() && depth <= 100000; i++) {
         if (_currentNode->connections.at(i).target->hasBeenUsed == false) {
             _pathCreated = RekurzCreateDeterministicPath(_currentNode->connections.at(i).target);
             if (_pathCreated == true) {
@@ -71,13 +67,11 @@ bool Path::CreateMonteCarloPath(GraphNode *_readNodes, GraphNode *_contigNode) {
     averageSequenceIdentity = 0;
 
     depth = 0;
-//    printf("Generating for contig %d \n", _contigNode->index);
     if (RekurzCreateMonteCarloPath(_contigNode)) {
-        pathNodes.insert(pathNodes.begin(), _contigNode);
-        averageSequenceIdentity = (double) (averageSequenceIdentity / pathNodes.size());
+        averageSequenceIdentity = (double) (averageSequenceIdentity / (pathNodes.size() - 1));
 
-        for (auto &pathNode: pathNodes) {
-            pathNode->hasBeenUsed = false;
+        for (int i = 0; i < pathNodes.size(); i++) {
+            pathNodes.at(i)->hasBeenUsed = false;
         }
 
         return true;
@@ -91,7 +85,7 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode) {
     bool _pathCreated;
     depth++;
 
-    if (depth > 5000) {
+    if (depth > 100000) {
         return false;
     }
 
@@ -102,61 +96,42 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode) {
             pathNodes.insert(pathNodes.begin(), _currentNode->backwardsContigConnection.at(i).target);
             averageSequenceIdentity += _currentNode->backwardsContigConnection.at(i).sequenceIdentity;
             pathNodes.insert(pathNodes.begin(), _currentNode);
-            averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
-            pathLength += _currentNode->connections.at(i).baseStart;
+            //averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
+            //pathLength += _currentNode->connections.at(i).baseStart;
             return true;
         }
     }
 
-    // calculate extension score sum
-    double extensionScoreSum = std::accumulate(_currentNode->connections.begin(), _currentNode->connections.end(), 0,
-                                               [](double i, const Connection &connection) {
-                                                   return connection.extensionScore + i;
-                                               });
-
-    std::vector<Range> probabilites;
-    double start = 0;
-
-    // assign ranges to connections depending on their extension score
-    for (auto &connection: _currentNode->connections) {
-        double end = start + abs(connection.extensionScore);
-        Range range = Range(start, end, connection);
-        probabilites.push_back(range);
-        start = end;
+    int _extensionScoreSum = 0;
+    for (int i = 0; i < _currentNode->connections.size(); i++) {
+        _extensionScoreSum += _currentNode->connections.at(i).extensionScore;
     }
 
-    while (depth <= 5000) {
-        // setup for random number generation
-        std::random_device rd; // obtain a random number from hardware
-        std::mt19937 gen(rd()); // seed the generator
-        std::uniform_real_distribution<double> distr(0, extensionScoreSum); // define the range
+    srand(time(0));
 
-        // generate random number
-        double random = abs(distr(gen));
-//        printf("Generated number %f\n", random);
+    for (int i = 0; i < _currentNode->connections.size() * 5 && depth <= 100000; i++) {
 
-        // find the right range
-        auto it = std::find_if(probabilites.begin(), probabilites.end(), [random](Range range) {
-            return range.contains(random);
-        });
-        long index = std::distance(probabilites.begin(), it);
+        int _random = (rand() % (_extensionScoreSum + 1));
+        int _index;
+        int _currentSum=0;
 
-        Connection connection = probabilites[index].connection;
-
-        if (index >= probabilites.size() - 1) {
-            return false;
+        for (_index = 0; _index < _currentNode->connections.size() - 1; _index++) {
+            if (_random <= _currentSum + _currentNode->connections.at(_index).extensionScore) {
+                break;
+            }
+            _currentSum += _currentNode->connections.at(_index).extensionScore;
         }
 
-        if (!connection.target->hasBeenUsed) {
-            _pathCreated = RekurzCreateMonteCarloPath(connection.target);
-            if (_pathCreated) {
+        if (_currentNode->connections.at(_index).target->hasBeenUsed == false) {
+            _pathCreated = RekurzCreateMonteCarloPath(_currentNode->connections.at(_index).target);
+            if (_pathCreated == true) {
                 pathNodes.insert(pathNodes.begin(), _currentNode);
-                averageSequenceIdentity += connection.sequenceIdentity;
-                pathLength += connection.baseStart;
+                averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
+                if (_currentNode->isContig == false) {
+                    pathLength += _currentNode->connections.at(i).baseStart;
+                }
                 return true;
             }
-        } else {
-            depth++;
         }
     }
 
