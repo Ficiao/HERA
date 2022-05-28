@@ -5,48 +5,47 @@
 
 using namespace std;
 
-void Buckets::FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes) {
-	Path* _path;
-	bool _success;
+void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contigNodes, int _numberOfContigNodes) {
+    Path *_path;
+    bool _success;
 
-	//za svaku contigu, za svaki direktni overlap koji taj contiga ima sa readovima pokusaj sloziti put
-	for (int i = 1; i <= _numberOfContigNodes; i++) {
+    //za svaku contigu, za svaki direktni overlap koji taj contiga ima sa readovima pokusaj sloziti put
+    for (int i = 1; i <= _numberOfContigNodes; i++) {
 
-		if (i <= _numberOfContigNodes / 2) {
-			_contigNodes[i + (_numberOfContigNodes / 2)].hasBeenUsed = true;
-		}
-		else {
-			_contigNodes[i - (_numberOfContigNodes / 2)].hasBeenUsed = true;
-		}
+        if (i <= _numberOfContigNodes / 2) {
+            _contigNodes[i + (_numberOfContigNodes / 2)].hasBeenUsed = true;
+        } else {
+            _contigNodes[i - (_numberOfContigNodes / 2)].hasBeenUsed = true;
+        }
 
-		for (int j = 0; j < _contigNodes[i].connections.size(); j++) {
-			_path = new Path();
-			_success = _path->CreateDeterministicPath(_readNodes, &_contigNodes[i], j);
+        for (int j = 0; j < _contigNodes[i].connections.size(); j++) {
+            _path = new Path();
+            _success = _path->CreateDeterministicPath(_readNodes, &_contigNodes[i], j);
 
-			//ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
-			if (_success == true) {
-				if (_path->averageSequenceIdentity > 0.85f) {
-					int _startContigIndex = _path->pathNodes.front()->index;
-					int _endContigIndex = _path->pathNodes.back()->index;
+            //ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
+            if (_success == true) {
+                if (_path->averageSequenceIdentity > 0.85f) {
+                    int _startContigIndex = _path->pathNodes.front()->index;
+                    int _endContigIndex = _path->pathNodes.back()->index;
 
-					for (int k = 0; k < buckets.size(); k++) {
-						if (buckets.at(k).startContigIndex == _startContigIndex && buckets.at(k).endContigIndex == _endContigIndex) {
-							buckets.at(k).paths.push_back(*_path);
-							break;
-						}
-					}
-				}
-			}
-		}
+                    for (int k = 0; k < buckets.size(); k++) {
+                        if (buckets.at(k).startContigIndex == _startContigIndex &&
+                            buckets.at(k).endContigIndex == _endContigIndex) {
+                            buckets.at(k).paths.push_back(*_path);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
-		if (i <= _numberOfContigNodes / 2) {
-			_contigNodes[i + (_numberOfContigNodes / 2)].hasBeenUsed = false;
-		}
-		else {
-			_contigNodes[i - (_numberOfContigNodes / 2)].hasBeenUsed = false;
-		}
+        if (i <= _numberOfContigNodes / 2) {
+            _contigNodes[i + (_numberOfContigNodes / 2)].hasBeenUsed = false;
+        } else {
+            _contigNodes[i - (_numberOfContigNodes / 2)].hasBeenUsed = false;
+        }
 
-	}
+    }
 
 
 }
@@ -63,6 +62,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNod
 	bool _success;
 
 	while (_numberOfStochasticPaths < _numberOfDeterministicPaths) {
+	    printf("Iterating through contigs\n");
 
 		for (int i = 1; i <= _numberOfContigNodes; i++) {
 
@@ -80,7 +80,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNod
 			//ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
 			if (_success == true) {
 				_numberOfStochasticPaths++;
-				if (_path->averageSequenceIdentity > 0.85f) {
+//				if (_path->averageSequenceIdentity > 0.85f) {
 					int _startContigIndex = _path->pathNodes.front()->index;
 					int _endContigIndex = _path->pathNodes.back()->index;
 
@@ -90,7 +90,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNod
 							break;
 						}
 					}
-				}
+//				}
 			}
 			
 
@@ -137,7 +137,8 @@ std::vector<Path> Buckets::SelectWinner(int numberOfContigs) {
         long pathIndex = std::distance(winninContigBucket.paths.begin(), pathIt);
         Path winningBucketPath = winninContigBucket.paths[pathIndex];
 
-        printf("For bucket %d %d winner path is with pathIndex %ld and length %d\n", winninContigBucket.startContigIndex,
+        printf("For bucket %d %d winner path is with pathIndex %ld and length %d\n",
+               winninContigBucket.startContigIndex,
                winninContigBucket.endContigIndex,
                pathIndex,
                winningBucketPath.pathLength);

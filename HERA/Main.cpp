@@ -22,7 +22,7 @@ int main() {
     _connectionsSorter->sortConnectionsByExtensionScore(_readNodes, _readNodesNumber);
     _buckets->FillBucketsDeterministic(_readNodes, _contigNodes, _contigNodesNumber);
 
-    //_buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber, _monteCarloHyperparameter);
+    _buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber, _monteCarloHyperparameter);
 
     std::vector<Path> _paths = _buckets->SelectWinner(_contigNodesNumber);
 
