@@ -60,7 +60,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode* _currentNode) {
 	return false;
 }
 
-bool Path::CreateMonteCarloPath(GraphNode* _readNodes, GraphNode* _contigNode, int _indexOfStartingRead) {
+bool Path::CreateMonteCarloPath(GraphNode* _readNodes, GraphNode* _contigNode) {
 
 	return false;
 }

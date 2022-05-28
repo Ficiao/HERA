@@ -52,6 +52,58 @@ void Buckets::FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contig
 }
 
 void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes, int _monteCarloHyperparameter) {
+	int _numberOfDeterministicPaths = 0;
+
+	for (int i = 0; i < buckets.size(); i++) {
+		_numberOfDeterministicPaths += buckets.at(i).paths.size();
+	}
+
+	int _numberOfStochasticPaths = 0;
+	Path* _path;
+	bool _success;
+
+	while (_numberOfStochasticPaths < _numberOfDeterministicPaths) {
+
+		for (int i = 1; i <= _numberOfContigNodes; i++) {
+
+			if (i <= _numberOfContigNodes / 2) {
+				_contigNodes[i + (_numberOfContigNodes / 2)].hasBeenUsed = true;
+			}
+			else {
+				_contigNodes[i - (_numberOfContigNodes / 2)].hasBeenUsed = true;
+			}
+
+
+			_path = new Path();
+			_success = _path->CreateMonteCarloPath(_readNodes, &_contigNodes[i]);
+
+			//ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
+			if (_success == true) {
+				_numberOfStochasticPaths++;
+				if (_path->averageSequenceIdentity > 0.85f) {
+					int _startContigIndex = _path->pathNodes.front()->index;
+					int _endContigIndex = _path->pathNodes.back()->index;
+
+					for (int k = 0; k < buckets.size(); k++) {
+						if (buckets.at(k).startContigIndex == _startContigIndex && buckets.at(k).endContigIndex == _endContigIndex) {
+							buckets.at(k).paths.push_back(*_path);
+							break;
+						}
+					}
+				}
+			}
+			
+
+			if (i <= _numberOfContigNodes / 2) {
+				_contigNodes[i + (_numberOfContigNodes / 2)].hasBeenUsed = false;
+			}
+			else {
+				_contigNodes[i - (_numberOfContigNodes / 2)].hasBeenUsed = false;
+			}
+
+		}
+
+	}
 
 }
 
