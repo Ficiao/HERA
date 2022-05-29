@@ -9,7 +9,7 @@ bool Path::CreateDeterministicPath(GraphNode *_readNodes, GraphNode *_contigNode
     _contigNode->hasBeenUsed = true;
 
     depth = 0;
-    if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target) == true) {
+    if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target, _contigNode->index) == true) {
         pathNodes.insert(pathNodes.begin(), _contigNode);
         averageSequenceIdentity += _contigNode->connections.at(_indexOfStartingRead).sequenceIdentity;
         averageSequenceIdentity = (double) (averageSequenceIdentity / (double)(pathNodes.size() - 1));
@@ -25,17 +25,17 @@ bool Path::CreateDeterministicPath(GraphNode *_readNodes, GraphNode *_contigNode
     return false;
 }
 
-bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode) {
+bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode, int _currentContig) {
     bool _pathCreated;
     depth++;
 
-    if (depth > 100000) {
+    if (depth > 50000) {
         return false;
     }
     _currentNode->hasBeenUsed = true;
 
     for (int i = 0; i < _currentNode->backwardsContigConnection.size(); i++) {
-        if (_currentNode->backwardsContigConnection.at(i).target->hasBeenUsed == false) {
+        if (_currentNode->backwardsContigConnection.at(i).target->index == _currentContig + 1) {
             pathNodes.insert(pathNodes.begin(), _currentNode->backwardsContigConnection.at(i).target);
             averageSequenceIdentity += _currentNode->backwardsContigConnection.at(i).sequenceIdentity;
             pathNodes.insert(pathNodes.begin(), _currentNode);
@@ -45,9 +45,9 @@ bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode) {
     }
 
 
-    for (int i = 0; i < _currentNode->connections.size() && depth <= 100000; i++) {
+    for (int i = 0; i < _currentNode->connections.size() && depth <= 50000; i++) {
         if (_currentNode->connections.at(i).target->hasBeenUsed == false) {
-            _pathCreated = RekurzCreateDeterministicPath(_currentNode->connections.at(i).target);
+            _pathCreated = RekurzCreateDeterministicPath(_currentNode->connections.at(i).target, _currentContig);
             if (_pathCreated == true) {
                 pathNodes.insert(pathNodes.begin(), _currentNode);
                 averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;

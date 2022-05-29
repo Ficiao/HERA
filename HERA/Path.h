@@ -18,6 +18,6 @@ public:
 	bool CreateMonteCarloPath(GraphNode* _readNodes, GraphNode* _contigNode);
 
 private:
-	bool RekurzCreateDeterministicPath(GraphNode* _currentNode);
+	bool RekurzCreateDeterministicPath(GraphNode* _currentNode, int _currentContig);
 	bool RekurzCreateMonteCarloPath(GraphNode* _currentNode);
 };

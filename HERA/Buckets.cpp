@@ -10,7 +10,7 @@ void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contig
     bool _success;
 
     //za svaku contigu, za svaki direktni overlap koji taj contiga ima sa readovima pokusaj sloziti put
-    for (int i = 1; i <= _numberOfContigNodes; i++) {
+    for (int i = 1; i < _numberOfContigNodes; i++) {
 
         for (int j = 0; j < _contigNodes[i].connections.size(); j++) {
             _path = new Path();
