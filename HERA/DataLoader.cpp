@@ -92,10 +92,11 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             if ((_connection->baseEnd - _connection->baseStart < _baseNode->size - 1) 
                 && (_connection->targetEnd - _connection->targetStart < _targetNode->size - 1))
             {
-                _numberOfConnections++;
-                _baseNode->connections.push_back(*_connection);
-
-                if (_isContig) {
+                if (_connection->extensionScore > 0) {
+                    _numberOfConnections++;
+                    _baseNode->connections.push_back(*_connection);
+                }
+                /*else*/ if (_isContig) {
                     _connection = new Connection();
                     _connection->base = _targetNode;
                     _connection->baseStart = stoi(words[7]);
@@ -105,6 +106,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
                     _connection->targetEnd = stoi(words[3]);
                     _connection->residueMatches = stoi(words[9]);
                     _connection->allignmentBlockLength = stoi(words[10]);
+                    _connection->sequenceIdentity = _sequenceIdentity;
 
                     _targetNode->backwardsContigConnection.push_back(*_connection);
                 }

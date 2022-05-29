@@ -12,7 +12,7 @@ bool Path::CreateDeterministicPath(GraphNode *_readNodes, GraphNode *_contigNode
     if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target) == true) {
         pathNodes.insert(pathNodes.begin(), _contigNode);
         averageSequenceIdentity += _contigNode->connections.at(_indexOfStartingRead).sequenceIdentity;
-        averageSequenceIdentity = (double) (averageSequenceIdentity / (pathNodes.size() - 1));
+        averageSequenceIdentity = (double) (averageSequenceIdentity / (double)(pathNodes.size() - 1));
 
         for (int i = 0; i < pathNodes.size(); i++) {
             pathNodes.at(i)->hasBeenUsed = false;
@@ -39,8 +39,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode) {
             pathNodes.insert(pathNodes.begin(), _currentNode->backwardsContigConnection.at(i).target);
             averageSequenceIdentity += _currentNode->backwardsContigConnection.at(i).sequenceIdentity;
             pathNodes.insert(pathNodes.begin(), _currentNode);
-            //averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
-            //pathLength += _currentNode->connections.at(i).baseStart;
+            pathLength += _currentNode->backwardsContigConnection.at(i).baseStart;
             return true;
         }
     }

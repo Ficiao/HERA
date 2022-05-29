@@ -54,3 +54,5 @@ HERA/Debug/HERA.pdb
 HERA/Debug/HERA.log
 HERA/Debug/vc143.pdb
 *.tlog
+*.fasta
+*.paf

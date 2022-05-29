@@ -6,11 +6,11 @@
 
 int main() {
     int _readNodesNumber = 9284;
-    int _contigNodesNumber = 6;
+    int _contigNodesNumber = 3;
 
     DataLoader* _dataLoader = new DataLoader();
     GraphNode* _readNodes = _dataLoader->LoadData("overlap_reads_rc_ava_pb.paf", NULL, false, _readNodesNumber);
-	GraphNode* _contigNodes = _dataLoader->LoadData("overlaps_reads_contigs_rc_ava_pb.paf", _readNodes, true, _contigNodesNumber);
+	GraphNode* _contigNodes = _dataLoader->LoadData("overlaps_reads_rc_contigs.paf", _readNodes, true, _contigNodesNumber);
 
     Buckets* _buckets = new Buckets(_contigNodesNumber);
     ConnectionsSorter* _connectionsSorter = new ConnectionsSorter();
@@ -21,12 +21,12 @@ int main() {
     _connectionsSorter->sortConnectionsByExtensionScore(_readNodes, _readNodesNumber);
     _buckets->FillBucketsDeterministic(_readNodes, _contigNodes, _contigNodesNumber);
 
-    _buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber);
+    //_buckets->FillBucketsMonteCarlo(_readNodes, _contigNodes, _contigNodesNumber);
 
     std::vector<Path> _paths = _buckets->SelectWinner(_contigNodesNumber);
 
     FinalContigConstructor* finalContigConstructor = new FinalContigConstructor();
     finalContigConstructor->construct(_paths, "ecoli_test_reads_with_complements.fasta",
-                                      "ecoli_test_contigs_with_complements.fasta", "result");
+                                      "ecoli_test_contigs.fasta", "result");
 
 }
