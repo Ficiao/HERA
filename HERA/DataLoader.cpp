@@ -92,7 +92,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             if ((_connection->baseEnd - _connection->baseStart < _baseNode->size - 1) 
                 && (_connection->targetEnd - _connection->targetStart < _targetNode->size - 1))
             {
-                if (_connection->extensionScore > 0 || _isContig == false) {
+                if (_connection->extensionScore > 0) {
                     _numberOfConnections++;
                     _baseNode->connections.push_back(*_connection);
                 }
