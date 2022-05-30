@@ -18,7 +18,7 @@ void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contig
             _path = new Path();
             _success = _path->CreateDeterministicPath(_readNodes, &_contigNodes[i], j);
 
-            //if path is successfully created, figure out which bucked it belongs to based on start and end path index
+            //if path is successfully created, figure out which bucket it belongs to based on start and end path index
             if (_success == true) {
                 if (_path->averageSequenceIdentity > 0.9f) {
                     int _startContigIndex = _path->pathNodes.front()->index;
@@ -38,10 +38,10 @@ void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contig
     printf("Generated Deterministic paths\n");
 }
 
-//TODO: comment
 void Buckets::FillBucketsMonteCarlo(GraphNode *_readNodes, GraphNode *_contigNodes, int _numberOfContigNodes) {
     int _numberOfDeterministicPaths = 0;
 
+    // Collect the number of paths made using the deterministic algorithms
     for (int i = 0; i < buckets.size(); i++) {
         _numberOfDeterministicPaths += buckets.at(i).paths.size();
     }
@@ -50,21 +50,19 @@ void Buckets::FillBucketsMonteCarlo(GraphNode *_readNodes, GraphNode *_contigNod
     Path *_path;
     bool _success;
 
-    int rotation = 0;
-
+    // Search for paths until more stohastic paths are made than deterministic paths
     while (_numberOfStochasticPaths < _numberOfDeterministicPaths) {
-//	    printf("Iterating through contigs\n");
 
-        if (rotation % 10 == 0) {
+        if (_numberOfStochasticPaths % 10 == 0) {
             printf("Generated %d / %d Monte Carlo paths\n", _numberOfStochasticPaths, _numberOfDeterministicPaths);
         }
 
-        rotation++;
+        // For each contig try to generate a path
         for (int i = 1; i <= _numberOfContigNodes; i++) {
             _path = new Path();
             _success = _path->CreateMonteCarloPath(_readNodes, &_contigNodes[i]);
 
-            //ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
+            //if path is successfully created, figure out which bucket it belongs to based on start and end path index
             if (_success == true) {
                 if (_path->averageSequenceIdentity >= 0.5f) {
                     _numberOfStochasticPaths++;
@@ -87,19 +85,21 @@ void Buckets::FillBucketsMonteCarlo(GraphNode *_readNodes, GraphNode *_contigNod
 
 }
 
-//TODO: comment
 std::vector<Path> Buckets::SelectWinner(int numberOfContigs) {
     std::vector<Path> winningPaths;
 
+    // for each contig
     for (int i = 1; i < numberOfContigs; ++i) {
         std::vector<Bucket> contigBuckets;
 
+        // find buckets whose startContigIndex is the same as i
         for (auto &bucket: buckets) {
             if (bucket.startContigIndex == i && bucket.endContigIndex == i + 1) {
                 contigBuckets.push_back(bucket);
             }
         }
 
+        // find the bucket with the most paths
         auto bucketIt = std::max_element(contigBuckets.begin(),
                                          contigBuckets.end(),
                                          [](const Bucket &left, const Bucket &right) {
@@ -109,12 +109,14 @@ std::vector<Path> Buckets::SelectWinner(int numberOfContigs) {
         long bucketIndex = std::distance(contigBuckets.begin(), bucketIt);
         Bucket winninContigBucket = contigBuckets[bucketIndex];
 
+        // calculate average path in winning bucket
         auto avgPath =
                 std::accumulate(winninContigBucket.paths.begin(), winninContigBucket.paths.end(), 0,
                                 [](int i, Path &path) {
                                     return path.pathLength + i;
                                 }) / winninContigBucket.paths.size();
 
+        // sort paths in winning bucket by their length
         std::sort(winninContigBucket.paths.begin(),
                   winninContigBucket.paths.end(),
                   [](const Path &left, const Path &right) {
@@ -126,21 +128,25 @@ std::vector<Path> Buckets::SelectWinner(int numberOfContigs) {
 
         std::vector<Path> pathsCopy = winninContigBucket.paths;
 
+        // n will be index for finding the winning path
+        // n represents the path that is the first one after the top 10% of paths with longest paths
         int n = int(winninContigBucket.paths.size() / 10);
 
+        // get the path that is in place n in the sorted path vector
         std::nth_element(pathsCopy.begin(), pathsCopy.begin() + n - 1, pathsCopy.end(), [](Path &left, Path &right) {
             return left.pathLength > right.pathLength;
         });
 
         Path winningBucketPath = *(pathsCopy.begin() + n - 1);
 
-        printf("For bucket %d %d winner path is with and length %d\n",
+        printf("For bucket %d %d winner path with length %d\n",
                winninContigBucket.startContigIndex,
                winninContigBucket.endContigIndex,
-//               pathIndex,
                winningBucketPath.pathLength);
 
+        // collect the winning paths
         winningPaths.push_back(winningBucketPath);
     }
+
     return winningPaths;
 }
