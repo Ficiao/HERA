@@ -3,6 +3,7 @@ Implementation of HERA algorithm for https://www.fer.unizg.hr/predmet/bio1
 
 Algorithm description:https://www.biorxiv.org/content/10.1101/345983v1.full.pdf
 
+Github repo: https://github.com/Ficiao/HERA
 
 ### How to run the program (Linux)
 Note: for Windows download the source code, compile it and run with arguments specified below.
