@@ -1,5 +1,6 @@
 #include "Range.h"
 
+//TODO: comment
 bool Range::contains(int number) {
     return number < end && number >= start;
 }

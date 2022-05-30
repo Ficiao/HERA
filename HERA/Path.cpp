@@ -5,13 +5,17 @@
 #include <time.h>
 #include <random>
 #include <algorithm>
+#include <numeric>
 
 using namespace std;
 
+//Method used for path creation using greedy algorithm, expects Node connections tobe sorted based on wanted value
 bool Path::CreateDeterministicPath(GraphNode *_readNodes, GraphNode *_contigNode, int _indexOfStartingRead) {
     _contigNode->hasBeenUsed = true;
 
     depth = 0;
+
+    //If creation of path was successfull, add starting contig to it and reset all elements as if they havent been used
     if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target, _contigNode->index) ==
         true) {
         pathNodes.insert(pathNodes.begin(), _contigNode);
@@ -29,15 +33,19 @@ bool Path::CreateDeterministicPath(GraphNode *_readNodes, GraphNode *_contigNode
     return false;
 }
 
+//Recursive method for path creation using greedy algorithm. For current node visit his connected nodes sequentially. 
+//First time a node has connection to contig that hasnt been used, add it as path end and start recusrively adding elements back to the path
 bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode, int _currentContig) {
     bool _pathCreated;
     depth++;
 
+    //If too many nodes have been visited consider creation unsuccessful
     if (depth > 50000) {
         return false;
     }
     _currentNode->hasBeenUsed = true;
 
+    //Check if current node has connections to contigs that havent been used, and if there is finish path creation
     for (int i = 0; i < _currentNode->backwardsContigConnection.size(); i++) {
         if (_currentNode->backwardsContigConnection.at(i).target->index == _currentContig + 1) {
             pathNodes.insert(pathNodes.begin(), _currentNode->backwardsContigConnection.at(i).target);
@@ -48,7 +56,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode, int _currentCo
         }
     }
 
-
+    //Sequentially visit all connected read nodes
     for (int i = 0; i < _currentNode->connections.size() && depth <= 50000; i++) {
         if (_currentNode->connections.at(i).target->hasBeenUsed == false) {
             _pathCreated = RekurzCreateDeterministicPath(_currentNode->connections.at(i).target, _currentContig);
@@ -65,6 +73,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode, int _currentCo
     return false;
 }
 
+//TODO: comment
 bool Path::CreateMonteCarloPath(GraphNode *_readNodes, GraphNode *_contigNode) {
     _contigNode->hasBeenUsed = true;
     averageSequenceIdentity = 0;
@@ -85,6 +94,7 @@ bool Path::CreateMonteCarloPath(GraphNode *_readNodes, GraphNode *_contigNode) {
     return false;
 }
 
+//TODO: comment
 bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode, int _currentContig) {
     bool _pathCreated;
     depth++;

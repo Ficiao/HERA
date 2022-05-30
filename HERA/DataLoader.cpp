@@ -8,6 +8,7 @@
 
 using namespace std;
 
+//Creates a vector of graph nodes with size of command line argument
 GraphNode* DataLoader::LoadData(string _fileName, GraphNode* _targetNodes, bool _isContig, int _numberOfNodes) {
 
     int _numberOfElems = _numberOfNodes + 1;
@@ -23,6 +24,7 @@ GraphNode* DataLoader::LoadData(string _fileName, GraphNode* _targetNodes, bool 
     return _nodes;
 }
 
+//Fills the graph with elements from file of _fileName
 void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _fileName, bool _isContig) {
     int _lineCount = 0;
     int _numberOfConnections = 0;
@@ -44,6 +46,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             printf("Lines read: %d\n",_lineCount);
         }
 
+        //Parses the read line by \t delimiter in to string vector
         size_t pos = 0;
         for (int i = 0; i < 11; i++) {
             pos = _line.find(_delimiter);
@@ -51,6 +54,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             _line.erase(0, pos + _delimiter.length());
         }
         
+        //Turns respective string in to numbers and attaches it to the indexed node
         if (words[4].at(0)=='+') {
             index = GetIndexFromName(words[0]);
             _baseNode = &_nodes[index];
@@ -89,6 +93,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
             _extensionScore = _extensionScore - ((double)((_baseNode->size - _connection->baseEnd) + _connection->targetStart)) / 2;
             _connection->extensionScore = _extensionScore;
 
+            //Only adds the connection if none of the reads/contigs is completly overlaping each other
             if ((_connection->baseEnd - _connection->baseStart < _baseNode->size - 1) 
                 && (_connection->targetEnd - _connection->targetStart < _targetNode->size - 1))
             {
@@ -96,6 +101,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
                     _numberOfConnections++;
                     _baseNode->connections.push_back(*_connection);
                 }
+                //If extension score is negative and current read is for contig, then the current overlap read resembles left edge of contig
                 else if (_isContig) {
                     _connection = new Connection();
                     _connection->base = _targetNode;
@@ -123,6 +129,7 @@ void DataLoader::FillNodes(GraphNode* _nodes, GraphNode* _targetNodes, string _f
     printf("Number of connections made: %d\n", _numberOfConnections);
 }
 
+//Reads word character by character until substring of digits is found, which is then extracted
 int DataLoader::GetIndexFromName(string _name) {
     int _start = -1;
     int _end = -1;

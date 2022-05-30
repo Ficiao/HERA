@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 
+//TODO: comment
 void
 FinalContigConstructor::construct(std::vector<Path> paths, std::string readsFilename,
                                   std::string contigsFilename, std::string resultFilename) {
@@ -74,6 +75,7 @@ FinalContigConstructor::construct(std::vector<Path> paths, std::string readsFile
     printf("Wrote path to file: %s\n", file.c_str());
 }
 
+//TODO: comment
 void FinalContigConstructor::loadFile(std::string filename) {
     int _lineCount = 0;
     std::ifstream _fin;
@@ -113,6 +115,7 @@ void FinalContigConstructor::loadFile(std::string filename) {
     _fin.close();
 }
 
+//TODO: comment
 Connection FinalContigConstructor::findConnectionWithNode(int i, std::vector<Connection> connections) const {
     auto it = std::find_if(connections.begin(),
                            connections.end(),

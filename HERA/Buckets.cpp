@@ -6,18 +6,19 @@
 
 using namespace std;
 
+//Add paths to buckets using greedy algorithm. Expects node connections to be sorted based on looked value.
 void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contigNodes, int _numberOfContigNodes) {
     Path *_path;
     bool _success;
 
-    //za svaku contigu, za svaki direktni overlap koji taj contiga ima sa readovima pokusaj sloziti put
-    for (int i = 1; i < _numberOfContigNodes; i++) {
+    //For each contig, for each direct overlap that contig has with read nodes attempt to create a path
+    for (int i = 1; i <= _numberOfContigNodes; i++) {
 
         for (int j = 0; j < _contigNodes[i].connections.size(); j++) {
             _path = new Path();
             _success = _path->CreateDeterministicPath(_readNodes, &_contigNodes[i], j);
 
-            //ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
+            //if path is successfully created, figure out which bucked it belongs to based on start and end path index
             if (_success == true) {
                 if (_path->averageSequenceIdentity > 0.9f) {
                     int _startContigIndex = _path->pathNodes.front()->index;
@@ -37,6 +38,7 @@ void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contig
     printf("Generated Deterministic paths\n");
 }
 
+//TODO: comment
 void Buckets::FillBucketsMonteCarlo(GraphNode *_readNodes, GraphNode *_contigNodes, int _numberOfContigNodes) {
     int _numberOfDeterministicPaths = 0;
 
@@ -85,6 +87,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode *_readNodes, GraphNode *_contigNod
 
 }
 
+//TODO: comment
 std::vector<Path> Buckets::SelectWinner(int numberOfContigs) {
     std::vector<Path> winningPaths;
 
