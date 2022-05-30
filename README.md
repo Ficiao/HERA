@@ -8,7 +8,7 @@ Github repo: https://github.com/Ficiao/HERA
 ### How to run the program (Linux)
 Note: for Windows download the source code, compile it and run with arguments specified below.
 
-Download the BIOINFO-HERA zip from this link -> https://www.dropbox.com/s/u4qeemy2516wadg/BIOINFO-HERA.zip?dl=0 and unpack it to the desired location.
+Download the BIOINFO-HERA zip from this link -> https://www.dropbox.com/s/ml92mhvskv2k347/BIOINFO-HERA.zip?dl=0 and unpack it to the desired location.
 
 
 Open the terminal and position it to the directory which has the HERA executable.
