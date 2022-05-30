@@ -9,13 +9,13 @@
 
 using namespace std;
 
-//Method used for path creation using greedy algorithm, expects Node connections tobe sorted based on wanted value
+//Method used for path creation using greedy algorithm, expects Node connections to be sorted based on wanted value
 bool Path::CreateDeterministicPath(GraphNode *_readNodes, GraphNode *_contigNode, int _indexOfStartingRead) {
     _contigNode->hasBeenUsed = true;
 
     depth = 0;
 
-    //If creation of path was successfull, add starting contig to it and reset all elements as if they havent been used
+    //If creation of path was successfully, add starting contig to it and reset all elements as if they haven't been used
     if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target, _contigNode->index) ==
         true) {
         pathNodes.insert(pathNodes.begin(), _contigNode);
@@ -34,7 +34,7 @@ bool Path::CreateDeterministicPath(GraphNode *_readNodes, GraphNode *_contigNode
 }
 
 //Recursive method for path creation using greedy algorithm. For current node visit his connected nodes sequentially. 
-//First time a node has connection to contig that hasnt been used, add it as path end and start recusrively adding elements back to the path
+//First time a node has connection to contig that hasn't been used, add it as path end and start recursively adding elements back to the path
 bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode, int _currentContig) {
     bool _pathCreated;
     depth++;
@@ -45,7 +45,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode, int _currentCo
     }
     _currentNode->hasBeenUsed = true;
 
-    //Check if current node has connections to contigs that havent been used, and if there is finish path creation
+    //Check if current node has connections to contigs that haven't been used, and if there is finish path creation
     for (int i = 0; i < _currentNode->backwardsContigConnection.size(); i++) {
         if (_currentNode->backwardsContigConnection.at(i).target->index == _currentContig + 1) {
             pathNodes.insert(pathNodes.begin(), _currentNode->backwardsContigConnection.at(i).target);
@@ -73,12 +73,13 @@ bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode, int _currentCo
     return false;
 }
 
-//TODO: comment
+//Method used for path creation using Monte Carlo algorithm, expects Node connections to be sorted based on wanted value
 bool Path::CreateMonteCarloPath(GraphNode *_readNodes, GraphNode *_contigNode) {
     _contigNode->hasBeenUsed = true;
     averageSequenceIdentity = 0;
-
     depth = 0;
+
+    //If creation of path was successfully, add starting contig to it and reset all elements as if they haven't been used
     if (RekurzCreateMonteCarloPath(_contigNode, _contigNode->index)) {
         pathNodes.insert(pathNodes.begin(), _contigNode);
         averageSequenceIdentity = (double) (averageSequenceIdentity / (pathNodes.size() - 1));
@@ -94,17 +95,20 @@ bool Path::CreateMonteCarloPath(GraphNode *_readNodes, GraphNode *_contigNode) {
     return false;
 }
 
-//TODO: comment
+//Recursive method for path creation using Monte Carlo algorithm. For current node visit his connected node picked by random number generator with a probability of his extension score.
+//First time a node has connection to contig that hasn't been used, add it as path end and start recursively adding elements back to the path
 bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode, int _currentContig) {
     bool _pathCreated;
     depth++;
 
+    //If too many nodes have been visited consider creation unsuccessful
     if (depth > 100000) {
         return false;
     }
 
     _currentNode->hasBeenUsed = true;
 
+    //Check if current node has connections to contigs that haven't been used, and if there is finish path creation
     for (int i = 0; i < _currentNode->backwardsContigConnection.size(); i++) {
         if (_currentNode->backwardsContigConnection.at(i).target->index == _currentContig + 1) {
             pathNodes.insert(pathNodes.begin(), _currentNode->backwardsContigConnection.at(i).target);
@@ -115,14 +119,17 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode, int _currentConti
         }
     }
 
+    // Save to variable if all the connections have been used
     bool _allUsed = std::all_of(_currentNode->connections.begin(),
                                 _currentNode->connections.end(),
                                 [](Connection &connection) { return connection.target->hasBeenUsed; });
 
+    // If the connections vector is empty or all the existing connections were already used in the path return and consider this creation unsuccessful
     if (_currentNode->connections.empty() || _allUsed) {
         return false;
     }
 
+    // Get the sum of all extensions scores in current node's connections
     int _extensionScoreSum = std::accumulate(_currentNode->connections.begin(), _currentNode->connections.end(), 0,
                                              [](int i, const Connection &connection) {
                                                  return int(connection.extensionScore) + i;
@@ -153,21 +160,18 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode, int _currentConti
         });
         long index = std::distance(probabilites.begin(), it);
 
-
-//        printf("Found Range with index %ld and %d - %d, random num %d, ex sum %d\n", index, probabilites[index].start,
-//               probabilites[index].end, _random, _extensionScoreSum);
+        // if the index is out of range continue to generate random number
         if (index > probabilites.size() - 1) {
             continue;
         }
 
-        if (index == 0) {
-            int test = 1;
-        }
-
+        // Get the picked connection
         Connection connection = probabilites[index].connection;
 
+        // if the picked connection target node has not yet been used, call this method with the target node
         if (!connection.target->hasBeenUsed) {
             _pathCreated = RekurzCreateMonteCarloPath(connection.target, _currentContig);
+            // If path was successfully created calculate path length and average sequence identity and add current node to the beginning of the path
             if (_pathCreated) {
                 pathNodes.insert(pathNodes.begin(), _currentNode);
                 averageSequenceIdentity += connection.sequenceIdentity;
@@ -177,6 +181,7 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode, int _currentConti
                 return true;
             }
         } else {
+            // If target node has already been used, increase the depth and check if all the connections have already been used
             depth++;
 
             bool _allUsed = std::all_of(_currentNode->connections.begin(),
