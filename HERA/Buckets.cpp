@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <algorithm>
+#include <numeric>
 #include "Buckets.h"
 #include "Connection.h"
 
@@ -75,8 +76,6 @@ void Buckets::FillBucketsMonteCarlo(GraphNode *_readNodes, GraphNode *_contigNod
                             break;
                         }
                     }
-                } else {
-//                    printf("Rejected path with avg seq id %f\n", _path->averageSequenceIdentity);
                 }
             }
 
@@ -107,19 +106,35 @@ std::vector<Path> Buckets::SelectWinner(int numberOfContigs) {
         long bucketIndex = std::distance(contigBuckets.begin(), bucketIt);
         Bucket winninContigBucket = contigBuckets[bucketIndex];
 
-        auto pathIt = std::max_element(winninContigBucket.paths.begin(),
-                                       winninContigBucket.paths.end(),
-                                       [](const Path &left, const Path &right) {
-                                           return left.pathLength < right.pathLength;
-                                       });
+        auto avgPath =
+                std::accumulate(winninContigBucket.paths.begin(), winninContigBucket.paths.end(), 0,
+                                [](int i, Path &path) {
+                                    return path.pathLength + i;
+                                }) / winninContigBucket.paths.size();
 
-        long pathIndex = std::distance(winninContigBucket.paths.begin(), pathIt);
-        Path winningBucketPath = winninContigBucket.paths[pathIndex];
+        std::sort(winninContigBucket.paths.begin(),
+                  winninContigBucket.paths.end(),
+                  [](const Path &left, const Path &right) {
+                      return left.pathLength < right.pathLength;
+                  });
 
-        printf("For bucket %d %d winner path is with pathIndex %ld and length %d\n",
+        printf("Bucket %d %d average path %lu\n", winninContigBucket.startContigIndex,
+               winninContigBucket.endContigIndex, avgPath);
+
+        std::vector<Path> pathsCopy = winninContigBucket.paths;
+
+        int n = int(winninContigBucket.paths.size() / 10);
+
+        std::nth_element(pathsCopy.begin(), pathsCopy.begin() + n - 1, pathsCopy.end(), [](Path &left, Path &right) {
+            return left.pathLength > right.pathLength;
+        });
+
+        Path winningBucketPath = *(pathsCopy.begin() + n - 1);
+
+        printf("For bucket %d %d winner path is with and length %d\n",
                winninContigBucket.startContigIndex,
                winninContigBucket.endContigIndex,
-               pathIndex,
+//               pathIndex,
                winningBucketPath.pathLength);
 
         winningPaths.push_back(winningBucketPath);
