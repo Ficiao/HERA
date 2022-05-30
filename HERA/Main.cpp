@@ -4,8 +4,11 @@
 #include "Buckets.h"
 #include "FinalContigConstructor.h"
 #include <stdio.h>
+#include <time.h>
 
 int main(int argc, char *argv[]) {
+    int startTime = time(nullptr);
+
     if (argc != 8) {
         printf("Please enter right amount of arguments\n");
         printf("1 - PAF file with reads overlaps, including reversible complements\n");
@@ -52,4 +55,9 @@ int main(int argc, char *argv[]) {
     FinalContigConstructor *finalContigConstructor = new FinalContigConstructor();
     finalContigConstructor->construct(_paths, _fastaReadsFile,
                                       _fastaContigsFile, _resultFile);
+    printf("\n");
+
+    int endTime = time(nullptr);
+    double executionTime = (endTime - startTime) % 60;
+    printf("Execution time: %.2f s", executionTime);
 }
