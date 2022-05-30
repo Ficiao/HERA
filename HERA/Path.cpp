@@ -184,9 +184,9 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode, int _currentConti
             // If target node has already been used, increase the depth and check if all the connections have already been used
             depth++;
 
-            bool _allUsed = std::all_of(_currentNode->connections.begin(),
-                                        _currentNode->connections.end(),
-                                        [](Connection &connection) { return connection.target->hasBeenUsed; });
+            _allUsed = std::all_of(_currentNode->connections.begin(),
+                                   _currentNode->connections.end(),
+                                   [](Connection &connection) { return connection.target->hasBeenUsed; });
 
             if (_allUsed) {
                 return false;

@@ -3,7 +3,7 @@
 #include "ConnectionsSorter.h"
 #include "Connection.h"
 
-//TODO: comment
+// Sorts connections and backwards contig connections in all nodes by overlap score
 GraphNode *ConnectionsSorter::sortConnectionsByOverlapScore(GraphNode *_nodes, int size) {
     for (int i = 1; i <= size; ++i) {
         std::sort(_nodes[i].connections.begin(),
@@ -22,7 +22,7 @@ GraphNode *ConnectionsSorter::sortConnectionsByOverlapScore(GraphNode *_nodes, i
     return _nodes;
 }
 
-//TODO: comment
+// Sorts connections and backwards contig connections in all nodes by extension score
 GraphNode *ConnectionsSorter::sortConnectionsByExtensionScore(GraphNode *_nodes, int size) {
     for (int i = 1; i <= size; ++i) {
         std::sort(_nodes[i].connections.begin(),
