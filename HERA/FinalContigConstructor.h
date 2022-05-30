@@ -11,7 +11,7 @@ public:
               std::string resultFilename);
 
 private:
-    void loadFile(std::string filename);
+    void loadFile(std::string filename, bool isContigFile);
 
     Connection findConnectionWithNode(int i, std::vector<Connection> connections) const;
 };
