@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include "Path.h"
 #include "Connection.h"
+#include "Range.h"
 #include <time.h>
+#include <random>
+#include <algorithm>
 
 using namespace std;
 
@@ -9,10 +12,11 @@ bool Path::CreateDeterministicPath(GraphNode *_readNodes, GraphNode *_contigNode
     _contigNode->hasBeenUsed = true;
 
     depth = 0;
-    if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target, _contigNode->index) == true) {
+    if (RekurzCreateDeterministicPath(_contigNode->connections.at(_indexOfStartingRead).target, _contigNode->index) ==
+        true) {
         pathNodes.insert(pathNodes.begin(), _contigNode);
         averageSequenceIdentity += _contigNode->connections.at(_indexOfStartingRead).sequenceIdentity;
-        averageSequenceIdentity = (double) (averageSequenceIdentity / (double)(pathNodes.size() - 1));
+        averageSequenceIdentity = (double) (averageSequenceIdentity / (double) (pathNodes.size() - 1));
 
         for (int i = 0; i < pathNodes.size(); i++) {
             pathNodes.at(i)->hasBeenUsed = false;
@@ -66,11 +70,12 @@ bool Path::CreateMonteCarloPath(GraphNode *_readNodes, GraphNode *_contigNode) {
     averageSequenceIdentity = 0;
 
     depth = 0;
-    if (RekurzCreateMonteCarloPath(_contigNode)) {
+    if (RekurzCreateMonteCarloPath(_contigNode, _contigNode->index)) {
+        pathNodes.insert(pathNodes.begin(), _contigNode);
         averageSequenceIdentity = (double) (averageSequenceIdentity / (pathNodes.size() - 1));
 
-        for (int i = 0; i < pathNodes.size(); i++) {
-            pathNodes.at(i)->hasBeenUsed = false;
+        for (auto &pathNode: pathNodes) {
+            pathNode->hasBeenUsed = false;
         }
 
         return true;
@@ -80,7 +85,7 @@ bool Path::CreateMonteCarloPath(GraphNode *_readNodes, GraphNode *_contigNode) {
     return false;
 }
 
-bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode) {
+bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode, int _currentContig) {
     bool _pathCreated;
     depth++;
 
@@ -91,45 +96,86 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode) {
     _currentNode->hasBeenUsed = true;
 
     for (int i = 0; i < _currentNode->backwardsContigConnection.size(); i++) {
-        if (!_currentNode->backwardsContigConnection.at(i).target->hasBeenUsed) {
+        if (_currentNode->backwardsContigConnection.at(i).target->index == _currentContig + 1) {
             pathNodes.insert(pathNodes.begin(), _currentNode->backwardsContigConnection.at(i).target);
             averageSequenceIdentity += _currentNode->backwardsContigConnection.at(i).sequenceIdentity;
             pathNodes.insert(pathNodes.begin(), _currentNode);
-            //averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
-            //pathLength += _currentNode->connections.at(i).baseStart;
+            pathLength += _currentNode->backwardsContigConnection.at(i).baseStart;
             return true;
         }
     }
 
-    int _extensionScoreSum = 0;
-    for (int i = 0; i < _currentNode->connections.size(); i++) {
-        _extensionScoreSum += _currentNode->connections.at(i).extensionScore;
+    bool _allUsed = std::all_of(_currentNode->connections.begin(),
+                                _currentNode->connections.end(),
+                                [](Connection &connection) { return connection.target->hasBeenUsed; });
+
+    if (_currentNode->connections.empty() || _allUsed) {
+        return false;
     }
 
-    srand(time(0));
+    int _extensionScoreSum = std::accumulate(_currentNode->connections.begin(), _currentNode->connections.end(), 0,
+                                             [](int i, const Connection &connection) {
+                                                 return int(connection.extensionScore) + i;
+                                             });
 
-    for (int i = 0; i < _currentNode->connections.size() * 5 && depth <= 100000; i++) {
+    std::vector<Range> probabilites;
+    int start = 0;
 
-        int _random = (rand() % (_extensionScoreSum + 1));
-        int _index;
-        int _currentSum=0;
+    // assign ranges to connections depending on their extension score
+    for (auto &connection: _currentNode->connections) {
+        int end = start + int(connection.extensionScore);
+        Range range = Range(start, end, connection);
+        probabilites.push_back(range);
+        start = end;
+    }
 
-        for (_index = 0; _index < _currentNode->connections.size() - 1; _index++) {
-            if (_random <= _currentSum + _currentNode->connections.at(_index).extensionScore) {
-                break;
-            }
-            _currentSum += _currentNode->connections.at(_index).extensionScore;
+    while (depth <= 100000) {
+        std::random_device rd; // obtain a random number from hardware
+        std::mt19937 gen(rd()); // seed the generator
+        std::uniform_int_distribution<int> distr(0, _extensionScoreSum); // define the range
+
+        // generate random number
+        int _random = distr(gen);
+
+        // find the right range
+        auto it = std::find_if(probabilites.begin(), probabilites.end(), [_random](Range range) {
+            return range.contains(_random);
+        });
+        long index = std::distance(probabilites.begin(), it);
+
+
+//        printf("Found Range with index %ld and %d - %d, random num %d, ex sum %d\n", index, probabilites[index].start,
+//               probabilites[index].end, _random, _extensionScoreSum);
+        if (index > probabilites.size() - 1) {
+            continue;
         }
 
-        if (_currentNode->connections.at(_index).target->hasBeenUsed == false) {
-            _pathCreated = RekurzCreateMonteCarloPath(_currentNode->connections.at(_index).target);
-            if (_pathCreated == true) {
+        if (index == 0) {
+            int test = 1;
+        }
+
+        Connection connection = probabilites[index].connection;
+//        printf("Chose index %ld\n", index);
+
+        if (!connection.target->hasBeenUsed) {
+            _pathCreated = RekurzCreateMonteCarloPath(connection.target, _currentContig);
+            if (_pathCreated) {
                 pathNodes.insert(pathNodes.begin(), _currentNode);
-                averageSequenceIdentity += _currentNode->connections.at(i).sequenceIdentity;
-                if (_currentNode->isContig == false) {
-                    pathLength += _currentNode->connections.at(i).baseStart;
+                averageSequenceIdentity += connection.sequenceIdentity;
+                if (!_currentNode->isContig) {
+                    pathLength += connection.baseStart;
                 }
                 return true;
+            }
+        } else {
+            depth++;
+
+            bool _allUsed = std::all_of(_currentNode->connections.begin(),
+                                        _currentNode->connections.end(),
+                                        [](Connection &connection) { return connection.target->hasBeenUsed; });
+
+            if (_allUsed) {
+                return false;
             }
         }
     }

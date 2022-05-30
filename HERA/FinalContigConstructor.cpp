@@ -37,17 +37,17 @@ FinalContigConstructor::construct(std::vector<Path> paths, std::string readsFile
         int currentIndex = currentNode->index;
 
         // popuni next node i konekciju ako nije zadnji node
-        if (i < finalPath.size() - 1) {
+        if (i < finalPath.size() - 1 ) {
             GraphNode *nextNode = finalPath[i + 1];
-            if (nextNode->isContig) {
+            if (nextNode->isContig && !currentNode->backwardsContigConnection.empty()) {
                 rightConnection = findConnectionWithNode(nextNode->index, currentNode->backwardsContigConnection);
-            } else {
+            } else if (!currentNode->connections.empty()){
                 rightConnection = findConnectionWithNode(nextNode->index, currentNode->connections);
             }
         }
 
         // ako nije prvi node popuni leftConnection
-        if (i != 0) {
+        if (i != 0 && !currentNode->connections.empty()) {
             GraphNode *previousNode = finalPath[i - 1];
             leftConnection = findConnectionWithNode(currentIndex, previousNode->connections);
         }

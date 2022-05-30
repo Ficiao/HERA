@@ -32,48 +32,57 @@ void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contig
                 }
             }
         }
-
     }
+    printf("Generated Deterministic paths\n");
 }
 
-void Buckets::FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes) {
-	int _numberOfDeterministicPaths = 0;
+void Buckets::FillBucketsMonteCarlo(GraphNode *_readNodes, GraphNode *_contigNodes, int _numberOfContigNodes) {
+    int _numberOfDeterministicPaths = 0;
 
-	for (int i = 0; i < buckets.size(); i++) {
-		_numberOfDeterministicPaths += buckets.at(i).paths.size();
-	}
+    for (int i = 0; i < buckets.size(); i++) {
+        _numberOfDeterministicPaths += buckets.at(i).paths.size();
+    }
 
-	int _numberOfStochasticPaths = 0;
-	Path* _path;
-	bool _success;
+    int _numberOfStochasticPaths = 0;
+    Path *_path;
+    bool _success;
 
-	while (_numberOfStochasticPaths < _numberOfDeterministicPaths) {
+    int rotation = 0;
+
+    while (_numberOfStochasticPaths < _numberOfDeterministicPaths) {
 //	    printf("Iterating through contigs\n");
 
-		for (int i = 1; i <= _numberOfContigNodes; i++) {
+        if (rotation % 10 == 0) {
+            printf("Generated %d / %d Monte Carlo paths\n", _numberOfStochasticPaths, _numberOfDeterministicPaths);
+        }
 
-			_path = new Path();
-			_success = _path->CreateMonteCarloPath(_readNodes, &_contigNodes[i]);
+        rotation++;
+        for (int i = 1; i <= _numberOfContigNodes; i++) {
+            _path = new Path();
+            _success = _path->CreateMonteCarloPath(_readNodes, &_contigNodes[i]);
 
-			//ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
-			if (_success == true) {				
-				if (_path->averageSequenceIdentity >= 0.5f) {
+            //ako je put uspjesno slozen, otkrij u koji bucket ovisno o pocetnoj i zavrsnoj contigi put pripada i stavi ga tamo
+            if (_success == true) {
+                if (_path->averageSequenceIdentity >= 0.5f) {
                     _numberOfStochasticPaths++;
-					int _startContigIndex = _path->pathNodes.front()->index;
-					int _endContigIndex = _path->pathNodes.back()->index;
+                    int _startContigIndex = _path->pathNodes.front()->index;
+                    int _endContigIndex = _path->pathNodes.back()->index;
 
-					for (int k = 0; k < buckets.size(); k++) {
-						if (buckets.at(k).startContigIndex == _startContigIndex && buckets.at(k).endContigIndex == _endContigIndex) {
-							buckets.at(k).paths.push_back(*_path);
-							break;
-						}
-					}
-				}
-			}
+                    for (int k = 0; k < buckets.size(); k++) {
+                        if (buckets.at(k).startContigIndex == _startContigIndex &&
+                            buckets.at(k).endContigIndex == _endContigIndex) {
+                            buckets.at(k).paths.push_back(*_path);
+                            break;
+                        }
+                    }
+                } else {
+//                    printf("Rejected path with avg seq id %f\n", _path->averageSequenceIdentity);
+                }
+            }
 
-		}
+        }
 
-	}
+    }
 
 }
 
