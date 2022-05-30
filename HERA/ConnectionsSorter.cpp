@@ -1,5 +1,6 @@
+// @Author Fribert
+
 #include <algorithm>
-#include <cstdio>
 #include "ConnectionsSorter.h"
 #include "Connection.h"
 

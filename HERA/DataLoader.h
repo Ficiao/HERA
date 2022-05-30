@@ -1,3 +1,5 @@
+// @Author Matanović
+
 #pragma once
 #include <string>
 #include "GraphNode.h"

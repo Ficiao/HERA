@@ -1,3 +1,5 @@
+// @Author Fribert
+
 #include <map>
 #include "Buckets.h"
 #include "Connection.h"

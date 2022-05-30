@@ -1,14 +1,13 @@
-#include <stdio.h>
 #include "Path.h"
 #include "Connection.h"
 #include "Range.h"
-#include <time.h>
 #include <random>
 #include <algorithm>
 #include <numeric>
 
 using namespace std;
 
+// @Author Matanović
 //Method used for path creation using greedy algorithm, expects Node connections to be sorted based on wanted value
 bool Path::CreateDeterministicPath(GraphNode *_contigNode, int _indexOfStartingRead) {
     _contigNode->hasBeenUsed = true;
@@ -33,6 +32,7 @@ bool Path::CreateDeterministicPath(GraphNode *_contigNode, int _indexOfStartingR
     return false;
 }
 
+// @Author Matanović
 //Recursive method for path creation using greedy algorithm. For current node visit his connected nodes sequentially. 
 //First time a node has connection to contig that hasn't been used, add it as path end and start recursively adding elements back to the path
 bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode, int _currentContig) {
@@ -73,6 +73,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode, int _currentCo
     return false;
 }
 
+// @Author Fribert
 //Method used for path creation using Monte Carlo algorithm, expects Node connections to be sorted based on wanted value
 bool Path::CreateMonteCarloPath(GraphNode *_contigNode) {
     _contigNode->hasBeenUsed = true;
@@ -95,6 +96,7 @@ bool Path::CreateMonteCarloPath(GraphNode *_contigNode) {
     return false;
 }
 
+// @Author Fribert
 //Recursive method for path creation using Monte Carlo algorithm. For current node visit his connected node picked by random number generator with a probability of his extension score.
 //First time a node has connection to contig that hasn't been used, add it as path end and start recursively adding elements back to the path
 bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode, int _currentContig) {

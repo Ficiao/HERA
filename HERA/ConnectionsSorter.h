@@ -1,3 +1,5 @@
+// @Author Fribert
+
 #include "GraphNode.h"
 
 class ConnectionsSorter {

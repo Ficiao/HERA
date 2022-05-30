@@ -6,19 +6,20 @@
 
 using namespace std;
 
-//Add paths to buckets using greedy algorithm. Expects node connections to be sorted based on looked value.
+// @Author Matanović
+// Add paths to buckets using greedy algorithm. Expects node connections to be sorted based on looked value.
 void Buckets::FillBucketsDeterministic(GraphNode *_contigNodes, int _numberOfContigNodes) {
     Path *_path;
     bool _success;
 
-    //For each contig, for each direct overlap that contig has with read nodes attempt to create a path
+    // For each contig, for each direct overlap that contig has with read nodes attempt to create a path
     for (int i = 1; i <= _numberOfContigNodes; i++) {
 
         for (int j = 0; j < _contigNodes[i].connections.size(); j++) {
             _path = new Path();
             _success = _path->CreateDeterministicPath(&_contigNodes[i], j);
 
-            //if path is successfully created, figure out which bucket it belongs to based on start and end path index
+            // If path is successfully created, figure out which bucket it belongs to based on start and end path index
             if (_success == true) {
                 if (_path->averageSequenceIdentity > 0.9f) {
                     int _startContigIndex = _path->pathNodes.front()->index;
@@ -38,6 +39,8 @@ void Buckets::FillBucketsDeterministic(GraphNode *_contigNodes, int _numberOfCon
     printf("Generated Deterministic paths\n");
 }
 
+// @Author Fribert
+// Add paths to buckets using Monte Carlo algorithm. Expects node connections to be sorted based on extension score.
 void Buckets::FillBucketsMonteCarlo(GraphNode *_contigNodes, int _numberOfContigNodes) {
     int _numberOfDeterministicPaths = 0;
 
@@ -62,7 +65,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode *_contigNodes, int _numberOfContig
             _path = new Path();
             _success = _path->CreateMonteCarloPath(&_contigNodes[i]);
 
-            //if path is successfully created, figure out which bucket it belongs to based on start and end path index
+            // If path is successfully created, figure out which bucket it belongs to based on start and end path index
             if (_success == true) {
                 if (_path->averageSequenceIdentity >= 0.5f) {
                     _numberOfStochasticPaths++;
@@ -85,6 +88,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode *_contigNodes, int _numberOfContig
 
 }
 
+// @Author Fribert
 std::vector<Path> Buckets::SelectWinner(int numberOfContigs) {
     std::vector<Path> winningPaths;
 

@@ -1,3 +1,5 @@
+// @Author Fribert
+
 #include "FinalContigConstructor.h"
 #include "DataLoader.h"
 #include "Connection.h"

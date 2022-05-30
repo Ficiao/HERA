@@ -1,3 +1,5 @@
+// @Author Fribert
+
 #include "Range.h"
 
 // Returns true if number is contained within the range, returns false otherwise

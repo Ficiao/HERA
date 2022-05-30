@@ -1,8 +1,10 @@
+// @Author Matanović
+
 #pragma once
 #include "Bucket.h"
 
 class Buckets {
-public: 
+public:
 	std::vector<Bucket> buckets;
 
 	//Constructor which creates bucket for each contig combination
@@ -19,7 +21,7 @@ public:
 						buckets.push_back(*new Bucket(i, j));
 					}
 				}
-			}			
+			}
 		}
 	}
 
