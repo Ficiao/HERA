@@ -14,8 +14,8 @@ public:
 		averageSequenceIdentity = -1;
 	}
 
-	bool CreateDeterministicPath(GraphNode* _readNodes, GraphNode* _contigNode, int _indexOfStartingRead);
-	bool CreateMonteCarloPath(GraphNode* _readNodes, GraphNode* _contigNode);
+	bool CreateDeterministicPath(GraphNode *_contigNode, int _indexOfStartingRead);
+	bool CreateMonteCarloPath(GraphNode *_contigNode);
 
 private:
 	bool RekurzCreateDeterministicPath(GraphNode* _currentNode, int _currentContig);

@@ -7,7 +7,7 @@
 using namespace std;
 
 //Add paths to buckets using greedy algorithm. Expects node connections to be sorted based on looked value.
-void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contigNodes, int _numberOfContigNodes) {
+void Buckets::FillBucketsDeterministic(GraphNode *_contigNodes, int _numberOfContigNodes) {
     Path *_path;
     bool _success;
 
@@ -16,7 +16,7 @@ void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contig
 
         for (int j = 0; j < _contigNodes[i].connections.size(); j++) {
             _path = new Path();
-            _success = _path->CreateDeterministicPath(_readNodes, &_contigNodes[i], j);
+            _success = _path->CreateDeterministicPath(&_contigNodes[i], j);
 
             //if path is successfully created, figure out which bucket it belongs to based on start and end path index
             if (_success == true) {
@@ -38,7 +38,7 @@ void Buckets::FillBucketsDeterministic(GraphNode *_readNodes, GraphNode *_contig
     printf("Generated Deterministic paths\n");
 }
 
-void Buckets::FillBucketsMonteCarlo(GraphNode *_readNodes, GraphNode *_contigNodes, int _numberOfContigNodes) {
+void Buckets::FillBucketsMonteCarlo(GraphNode *_contigNodes, int _numberOfContigNodes) {
     int _numberOfDeterministicPaths = 0;
 
     // Collect the number of paths made using the deterministic algorithms
@@ -60,7 +60,7 @@ void Buckets::FillBucketsMonteCarlo(GraphNode *_readNodes, GraphNode *_contigNod
         // For each contig try to generate a path
         for (int i = 1; i <= _numberOfContigNodes; i++) {
             _path = new Path();
-            _success = _path->CreateMonteCarloPath(_readNodes, &_contigNodes[i]);
+            _success = _path->CreateMonteCarloPath(&_contigNodes[i]);
 
             //if path is successfully created, figure out which bucket it belongs to based on start and end path index
             if (_success == true) {

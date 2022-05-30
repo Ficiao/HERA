@@ -8,7 +8,7 @@ public:
     std::map<int, std::string> contigs;
 
     void construct(std::vector<Path> paths, std::string readsFilename, std::string contigsFilename,
-              std::string resultFilename);
+                   std::string resultFilename);
 
 private:
     void loadFile(std::string filename, bool isContigFile);

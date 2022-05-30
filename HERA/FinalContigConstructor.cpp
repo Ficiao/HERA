@@ -10,6 +10,7 @@
 void
 FinalContigConstructor::construct(std::vector<Path> paths, std::string readsFilename,
                                   std::string contigsFilename, std::string resultFilename) {
+    // Load nodes genome sequences
     loadFile(readsFilename, false);
     loadFile(contigsFilename, true);
 

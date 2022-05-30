@@ -10,7 +10,7 @@
 using namespace std;
 
 //Method used for path creation using greedy algorithm, expects Node connections to be sorted based on wanted value
-bool Path::CreateDeterministicPath(GraphNode *_readNodes, GraphNode *_contigNode, int _indexOfStartingRead) {
+bool Path::CreateDeterministicPath(GraphNode *_contigNode, int _indexOfStartingRead) {
     _contigNode->hasBeenUsed = true;
 
     depth = 0;
@@ -74,7 +74,7 @@ bool Path::RekurzCreateDeterministicPath(GraphNode *_currentNode, int _currentCo
 }
 
 //Method used for path creation using Monte Carlo algorithm, expects Node connections to be sorted based on wanted value
-bool Path::CreateMonteCarloPath(GraphNode *_readNodes, GraphNode *_contigNode) {
+bool Path::CreateMonteCarloPath(GraphNode *_contigNode) {
     _contigNode->hasBeenUsed = true;
     averageSequenceIdentity = 0;
     depth = 0;

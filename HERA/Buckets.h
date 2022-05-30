@@ -23,7 +23,7 @@ public:
 		}
 	}
 
-	void FillBucketsDeterministic(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes);
-	void FillBucketsMonteCarlo(GraphNode* _readNodes, GraphNode* _contigNodes, int _numberOfContigNodes);
+	void FillBucketsDeterministic(GraphNode *_contigNodes, int _numberOfContigNodes);
+	void FillBucketsMonteCarlo(GraphNode *_contigNodes, int _numberOfContigNodes);
 	std::vector<Path> SelectWinner(int numberOfContigs);
 };
