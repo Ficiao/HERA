@@ -155,7 +155,6 @@ bool Path::RekurzCreateMonteCarloPath(GraphNode *_currentNode, int _currentConti
         }
 
         Connection connection = probabilites[index].connection;
-//        printf("Chose index %ld\n", index);
 
         if (!connection.target->hasBeenUsed) {
             _pathCreated = RekurzCreateMonteCarloPath(connection.target, _currentContig);

@@ -60,10 +60,6 @@ FinalContigConstructor::construct(std::vector<Path> paths, std::string readsFile
             read = reads[currentIndex];
         }
 
-//        if (currentNode->isContig) {
-//            _fin << "\n";
-//            continue;
-//        }
         if (i == 0) {
             _fin << read.substr(0, rightConnection.baseEnd);
         } else if (i < finalPath.size() - 1) {
