@@ -4,9 +4,11 @@ Implementation of HERA algorithm for https://www.fer.unizg.hr/predmet/bio1
 Algorithm description:https://www.biorxiv.org/content/10.1101/345983v1.full.pdf
 
 
+### How to run the program (Linux)
+Note: for Windows download the source code, compile it and run with arguments specified below.
 
-### How to run the program
-Download the BIOINFO-HERA zip and unpack it to the desired location.
+Download the BIOINFO-HERA zip from this link -> https://www.dropbox.com/s/u4qeemy2516wadg/BIOINFO-HERA.zip?dl=0 and unpack it to the desired location.
+
 
 Open the terminal and position it to the directory which has the HERA executable.
 Make sure you have all the necessary files to run the program. 
@@ -26,3 +28,5 @@ Example how to run the program with Ecoli test files:
 
 ### Testing the output
 Use the Gepard tool (https://cube.univie.ac.at/gepard) and compare the result file with the test reference.
+
+
