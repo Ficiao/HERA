@@ -59,5 +59,5 @@ int main(int argc, char *argv[]) {
 
     int endTime = time(nullptr);
     double executionTime = (endTime - startTime) % 60;
-    printf("Execution time: %.2f s", executionTime);
+    printf("Execution time: %.2f s\n", executionTime);
 }
