@@ -20,8 +20,6 @@ FinalContigConstructor::construct(std::vector<Path> paths, std::string readsFile
     std::string file = resultFilename + "-" + std::to_string(time(nullptr)) + ".fasta";
     _fin.open(file);
 
-    printf("Writing to file: %s\n", file.c_str());
-
     _fin << ">BIOINFORMATIKA Escherichia coli genome\n";
 
     // Go through winning paths and collect them to one single vector without the joint nodes between the paths
